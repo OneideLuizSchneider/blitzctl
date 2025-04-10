@@ -9,6 +9,17 @@ import (
 	"os/exec"
 
 	"github.com/spf13/cobra"
+	"k8s.io/kubectl/pkg/util/i18n"
+	"k8s.io/kubectl/pkg/util/templates"
+)
+
+var (
+	listExample = templates.Examples(i18n.T(`
+		# List Local Minikube clusters
+		blitzctl list clusters minikube
+
+		# List Local Minikube clusters
+		blitzctl list clusters kind`))
 )
 
 // listCmd represents the list command
@@ -20,7 +31,7 @@ This command will display all the local environments
 that are currently available on your system.
 You can use this command to quickly see which environments
 are available for use and their current status.`,
-	Example: `blitzctl list`,
+	Example: listExample,
 	Aliases: []string{"ls"},
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
