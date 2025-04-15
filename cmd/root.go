@@ -23,7 +23,7 @@ local Kubernetes environments.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := cmd.Help(); err != nil {
 			// Handle the error (e.g., log it or print it)
-			cmd.PrintErrln("Error displaying help:", err)
+			cmd.PrintErrln("❌ Error displaying help:", err)
 		}
 	},
 }
