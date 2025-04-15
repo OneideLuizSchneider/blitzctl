@@ -51,14 +51,13 @@ var listKindCmd = &cobra.Command{
 	Run:     listKindClusters,
 }
 
+// listMinikubeClusters lists all available Minikube clusters
 func listMinikubeClusters(cmd *cobra.Command, args []string) {
-	// Check if Minikube is installed
 	_, err := exec.LookPath("minikube")
 	if err != nil {
 		fmt.Println("❌ Minikube is not installed. Please install Minikube to use this command.")
 		os.Exit(1)
 	}
-	// List Minikube clusters
 	getCmd := exec.Command("minikube", "profile", "list")
 	output, err := getCmd.Output()
 	if err != nil {
@@ -69,14 +68,13 @@ func listMinikubeClusters(cmd *cobra.Command, args []string) {
 	fmt.Println(string(output))
 }
 
+// listKindClusters lists all available Kind clusters
 func listKindClusters(cmd *cobra.Command, args []string) {
-	// Check if Kind is installed
 	_, err := exec.LookPath("kind")
 	if err != nil {
 		fmt.Println("❌ Kind is not installed. Please install Kind to use this command.")
 		os.Exit(1)
 	}
-	// List Kind clusters
 	getCmd := exec.Command("kind", "get", "clusters")
 	output, err := getCmd.Output()
 	if err != nil {

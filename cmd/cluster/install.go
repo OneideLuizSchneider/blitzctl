@@ -26,12 +26,12 @@ for development and testing purposes.`,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := cmd.Help(); err != nil {
-			// Handle the error (e.g., log it or print it)
 			cmd.PrintErrln("❌ Error displaying help:", err)
 		}
 	},
 }
 
+// installMinikubeCmd represents the install minikube command
 var installMinikubeCmd = &cobra.Command{
 	Use:     "minikube",
 	Short:   "Install a minikube cluster",
@@ -46,7 +46,6 @@ var installMinikubeCmd = &cobra.Command{
 			fmt.Println("Please make sure you have Brew installed.")
 			fmt.Println("You can install Brew by running the following command:")
 			fmt.Println("https://brew.sh/")
-			// Check if Minikube is installed
 			_, err := exec.LookPath("brew")
 			if err != nil {
 				fmt.Println("❌ Brew is not installed. Please install Brew to use this command.")
@@ -81,6 +80,7 @@ var installMinikubeCmd = &cobra.Command{
 	},
 }
 
+// installKindCmd represents the install kind command
 var installKindCmd = &cobra.Command{
 	Use:     "kind",
 	Short:   "Install a kind cluster",
@@ -130,6 +130,7 @@ var installKindCmd = &cobra.Command{
 	},
 }
 
+// init function to add the install command to the root command
 func init() {
 	installCmd.AddCommand(installMinikubeCmd)
 	installCmd.AddCommand(installKindCmd)
