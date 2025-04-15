@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 Oneide Luiz Schneider <...@...>
+Copyright © 2025 Oneide Luiz Schneider
 */
 package cmd
 
