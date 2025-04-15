@@ -24,7 +24,10 @@ for development and testing purposes.`,
 	Aliases: []string{"i"},
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		if err := cmd.Help(); err != nil {
+			// Handle the error (e.g., log it or print it)
+			cmd.PrintErrln("Error displaying help:", err)
+		}
 	},
 }
 

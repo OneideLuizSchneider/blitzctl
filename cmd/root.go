@@ -21,7 +21,10 @@ lightweight and easy to use, making it ideal for developers
 who need a quick and efficient way to set up and manage
 local Kubernetes environments.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		if err := cmd.Help(); err != nil {
+			// Handle the error (e.g., log it or print it)
+			cmd.PrintErrln("Error displaying help:", err)
+		}
 	},
 }
 
