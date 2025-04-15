@@ -1,4 +1,4 @@
-module blitzctl
+module github.com/OneideLuizSchneider/blitzctl
 
 go 1.23.1
 
