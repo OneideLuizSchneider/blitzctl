@@ -53,4 +53,5 @@ func GetClusterCmd() *cobra.Command {
 func init() {
 	clusterCmd.AddCommand(listCmd)
 	clusterCmd.AddCommand(installCmd)
+	clusterCmd.AddCommand(createCmd)
 }
