@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
 	"github.com/spf13/cobra"
 )
 
@@ -31,16 +32,6 @@ are available for use and their current status.`,
 	},
 }
 
-var listMinikubeCmd = &cobra.Command{
-	Use:     "minikube",
-	Short:   "List all minikube clusters",
-	Long:    `List all available minikube local clusters`,
-	Example: `blitzctl list clusters minikube`,
-	Aliases: []string{"mini", "m"},
-	Args:    cobra.NoArgs,
-	Run:     listMinikubeClusters,
-}
-
 var listKindCmd = &cobra.Command{
 	Use:     "kind",
 	Short:   "List all kind clusters",
@@ -49,23 +40,6 @@ var listKindCmd = &cobra.Command{
 	Aliases: []string{"kind", "k"},
 	Args:    cobra.NoArgs,
 	Run:     listKindClusters,
-}
-
-// listMinikubeClusters lists all available Minikube clusters
-func listMinikubeClusters(cmd *cobra.Command, args []string) {
-	_, err := exec.LookPath("minikube")
-	if err != nil {
-		fmt.Println("❌ Minikube is not installed. Please install Minikube to use this command.")
-		os.Exit(1)
-	}
-	getCmd := exec.Command("minikube", "profile", "list")
-	output, err := getCmd.Output()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "❌ Error getting Minikube clusters: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Println("Available Minikube clusters:")
-	fmt.Println(string(output))
 }
 
 // listKindClusters lists all available Kind clusters
@@ -81,11 +55,11 @@ func listKindClusters(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(os.Stderr, "❌ Error getting Kind clusters: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Println("Available Kind clusters:")
+	fmt.Println("✅ Available Kind clusters:")
 	fmt.Println(string(output))
 }
 
 func init() {
-	listCmd.AddCommand(listMinikubeCmd)
+	listCmd.AddCommand(minikube.NewlistMinikubeCmd())
 	listCmd.AddCommand(listKindCmd)
 }
