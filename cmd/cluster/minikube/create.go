@@ -68,7 +68,7 @@ func (o *CreateOptions) Run() error {
 	}
 
 	fmt.Printf("✅ Minikube cluster '%s' created successfully with %s and %s\n", o.ClusterName, o.K8sVersion, o.ContainerRuntime)
-	fmt.Printf("✅ CNI: %s\n", o.Cni)
+	fmt.Printf("🔌 CNI: %s\n", o.Cni)
 	return nil
 }
 
@@ -79,7 +79,7 @@ func NewCreateMinikubeCmd() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Create a minikube cluster",
 		Long:    `Create a minikube cluster using the specified driver and configuration.`,
-		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.25.0 --container-runtime=docker`,
+		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --container-runtime=docker`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := o.Complete(cmd, args); err != nil {
