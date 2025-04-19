@@ -15,12 +15,14 @@ import (
 
 type CreateOptions struct {
 	ClusterName string
+	K8sVersion  string
 }
 
 // NewCreateOptions initializes CreateOptions with default values
 func NewCreateOptions() *CreateOptions {
 	return &CreateOptions{
 		ClusterName: config.DefaultClusterName,
+		K8sVersion:  config.DefaultK8sVersion,
 	}
 }
 
@@ -49,6 +51,7 @@ func (o *CreateOptions) Run() error {
 		"kind",
 		"create",
 		"cluster",
+		"--image=kindest/node:v"+o.K8sVersion,
 		"--name="+o.ClusterName,
 	)
 	// Set up real-time output streaming
