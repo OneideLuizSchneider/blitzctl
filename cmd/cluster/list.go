@@ -4,10 +4,7 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
-	"fmt"
-	"os"
-	"os/exec"
-
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
 	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
 	"github.com/spf13/cobra"
 )
@@ -32,34 +29,7 @@ are available for use and their current status.`,
 	},
 }
 
-var listKindCmd = &cobra.Command{
-	Use:     "kind",
-	Short:   "List all kind clusters",
-	Long:    `List all available kind local clusters`,
-	Example: `blitzctl list clusters <kind>`,
-	Aliases: []string{"kind", "k"},
-	Args:    cobra.NoArgs,
-	Run:     listKindClusters,
-}
-
-// listKindClusters lists all available Kind clusters
-func listKindClusters(cmd *cobra.Command, args []string) {
-	_, err := exec.LookPath("kind")
-	if err != nil {
-		fmt.Println("❌ Kind is not installed. Please install Kind to use this command.")
-		os.Exit(1)
-	}
-	getCmd := exec.Command("kind", "get", "clusters")
-	output, err := getCmd.Output()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "❌ Error getting Kind clusters: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Println("✅ Available Kind clusters:")
-	fmt.Println(string(output))
-}
-
 func init() {
 	listCmd.AddCommand(minikube.NewlistMinikubeCmd())
-	listCmd.AddCommand(listKindCmd)
+	listCmd.AddCommand(kind.NewlistKindCmd())
 }

@@ -4,6 +4,7 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
 	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/util/i18n"
@@ -41,4 +42,5 @@ for development and testing purposes.`,
 
 func init() {
 	createCmd.AddCommand(minikube.NewCreateMinikubeCmd())
+	createCmd.AddCommand(kind.NewCreatkindCmd())
 }
