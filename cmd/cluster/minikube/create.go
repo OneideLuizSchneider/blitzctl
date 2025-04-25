@@ -14,19 +14,19 @@ import (
 )
 
 type CreateOptions struct {
-	ClusterName      string
-	K8sVersion       string
-	ContainerRuntime string
-	Cni              string
+	ClusterName string
+	K8sVersion  string
+	Driver      string
+	Cni         string
 }
 
 // NewCreateOptions initializes CreateOptions with default values
 func NewCreateOptions() *CreateOptions {
 	return &CreateOptions{
-		ClusterName:      config.DefaultClusterName,
-		K8sVersion:       config.DefaultK8sVersion,
-		ContainerRuntime: config.DefaultContainerRuntime,
-		Cni:              config.DefaultCni,
+		ClusterName: config.DefaultClusterName,
+		K8sVersion:  config.DefaultK8sVersion,
+		Driver:      config.DefaultDriver,
+		Cni:         config.DefaultCni,
 	}
 }
 
@@ -37,8 +37,8 @@ func (o *CreateOptions) Complete(cmd *cobra.Command, args []string) error {
 
 // Validate ensures that all required fields in CreateOptions are set
 func (o *CreateOptions) Validate() error {
-	if o.ContainerRuntime == "" {
-		return fmt.Errorf("❌ The container runtime is required")
+	if o.Driver == "" {
+		return fmt.Errorf("❌ The Driver is required")
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ func (o *CreateOptions) Run() error {
 		"minikube",
 		"start",
 		"--profile="+o.ClusterName,
-		"--driver="+o.ContainerRuntime,
+		"--driver="+o.Driver,
 		"--kubernetes-version="+o.K8sVersion,
 		"--extra-config=kubelet.max-pods=100",
 		"--cni="+o.Cni,
@@ -67,7 +67,7 @@ func (o *CreateOptions) Run() error {
 		return fmt.Errorf("❌ Error creating minikube cluster: %v", err)
 	}
 
-	fmt.Printf("✅ Minikube cluster '%s' created successfully with %s and %s\n", o.ClusterName, o.K8sVersion, o.ContainerRuntime)
+	fmt.Printf("✅ Minikube cluster '%s' created successfully with %s and %s\n", o.ClusterName, o.K8sVersion, o.Driver)
 	fmt.Printf("🔌 CNI: %s\n", o.Cni)
 	return nil
 }
@@ -79,7 +79,7 @@ func NewCreateMinikubeCmd() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Create a minikube cluster",
 		Long:    `Create a minikube cluster using the specified driver and configuration.`,
-		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --container-runtime=docker`,
+		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := o.Complete(cmd, args); err != nil {
@@ -95,11 +95,11 @@ func NewCreateMinikubeCmd() *cobra.Command {
 	// Bind flags to CreateOptions
 	cmd.Flags().StringVar(&o.ClusterName, "cluster-name", o.ClusterName, i18n.T("Cluster Name."))
 	cmd.Flags().StringVar(&o.K8sVersion, "k8s-version", o.K8sVersion, i18n.T("K8s Version."))
-	cmd.Flags().StringVar(&o.ContainerRuntime, "container-runtime", o.ContainerRuntime, i18n.T("Container Runtime."))
+	cmd.Flags().StringVar(&o.Driver, "driver", o.Driver, i18n.T("Driver."))
 	// Check the error returned by MarkFlagRequired
-	if err := cmd.MarkFlagRequired("container-runtime"); err != nil {
+	if err := cmd.MarkFlagRequired("driver"); err != nil {
 		// Handle the error (e.g., log it or panic)
-		panic(fmt.Sprintf("❌ Failed to mark 'container-runtime' flag as required: %v", err))
+		panic(fmt.Sprintf("❌ Failed to mark 'driver' flag as required: %v", err))
 	}
 
 	return cmd
