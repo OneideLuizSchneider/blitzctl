@@ -8,7 +8,7 @@ package config
 //   - Note: Not implemented yet
 const (
 	DefaultK8sVersion  = "1.32.0"
-	DefaultDriver      = "podman"
-	DefaultClusterName = "minikube"
+	DefaultDriver      = "docker"
+	DefaultClusterName = "blitz-cluster1"
 	DefaultCni         = "cilium"
 )

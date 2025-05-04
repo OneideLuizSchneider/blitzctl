@@ -16,15 +16,18 @@ var (
 
 		# List Local Minikube clusters
 		blitzctl clusters list minikube
-
 		# List Local Minikube clusters
 		blitzctl clusters list kind
 		
 		# Install a Minikube cluster
-		blitzctl clusters install minikube
-		
+		blitzctl cluster install minikube		
 		# Install a Kind cluster
-		blitzctl clusters install kind`))
+		blitzctl cluster install kind
+		
+		# Upgrade a Minikube cluster
+		blitzctl cluster upgrade minikube		
+		# Upgrade a Kind cluster
+		blitzctl cluster upgrade kind`))
 
 	clusterCmd = &cobra.Command{
 		Use:     "cluster",
@@ -55,4 +58,5 @@ func init() {
 	clusterCmd.AddCommand(installCmd)
 	clusterCmd.AddCommand(createCmd)
 	clusterCmd.AddCommand(deleteCmd)
+	clusterCmd.AddCommand(upgradeCmd)
 }
