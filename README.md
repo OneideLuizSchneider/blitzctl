@@ -1,6 +1,6 @@
 # blitzctl
 
-`blitzctl` is a CLI tool for managing local Kubernetes environments. It simplifies the creation, deletion, and management of Kubernetes clusters using tools like `Minikube` and `Kind`.
+`blitzctl` is a CLI tool for managing local Kubernetes environments. It simplifies the creation, deletion, upgrading, and management of Kubernetes clusters using tools like `Minikube` and `Kind`.
 
 Currently supports `macOS` and `Linux`.
 
@@ -20,6 +20,7 @@ blitzctl <command> <subcommand> [flags]
 - `delete`: Delete a Kubernetes cluster.
 - `list`: List all available clusters.
 - `install`: Install tools like Minikube or Kind.
+- `upgrade`: Upgrade tools like Minikube or Kind to their latest versions.
 
 #### Flags
 
@@ -33,8 +34,8 @@ blitzctl <command> <subcommand> [flags]
 Default configurations are defined in `config/defaults.go`:
 
 - **Kubernetes Version**: `1.32.0`
-- **Driver**: `podman`
-- **Cluster Name**: `minikube`
+- **Driver**: `docker`
+- **Cluster Name**: `blitz-cluster1`
 - **CNI Plugin**: `cilium`
 
 ---
@@ -71,6 +72,22 @@ Install Minikube on your system:
 
 ```sh
 blitzctl cluster install minikube
+```
+
+#### Upgrade Minikube
+
+Upgrade Minikube to the latest version:
+
+```sh
+blitzctl cluster upgrade minikube
+```
+
+#### Upgrade Kind
+
+Upgrade Kind to the latest version:
+
+```sh
+blitzctl cluster upgrade kind
 ```
 
 #### Create a Kind Cluster with Default Settings
@@ -110,15 +127,15 @@ blitzctl cluster delete kind --cluster-name=mycluster --debug
 #### [Cobra](https://github.com/spf13/cobra)
 - Cobra is a powerful library for creating modern CLI applications in Go.
 - It provides features like command hierarchies, flag parsing, and built-in help generation.
-- `blitzctl` uses Cobra to define commands like `create`, `delete`, `list`, and `install`.
+- `blitzctl` uses Cobra to define commands like `create`, `delete`, `list`, `install`, and `upgrade`.
 
 #### [Kind](https://kind.sigs.k8s.io/)
 - Kind (Kubernetes IN Docker) is a tool for running local Kubernetes clusters using Docker containers.
-- `blitzctl` integrates with Kind to create and manage Kubernetes clusters.
+- `blitzctl` integrates with Kind to create, manage, and upgrade Kubernetes clusters.
 
 #### [Minikube](https://minikube.sigs.k8s.io/docs/)
 - Minikube is a tool that lets you run Kubernetes locally.
-- `blitzctl` supports Minikube for creating and managing clusters with various drivers and configurations.
+- `blitzctl` supports Minikube for creating, managing, and upgrading clusters with various drivers and configurations.
 
 #### [Kubectl Utilities](https://kubernetes.io/docs/reference/kubectl/)
 - The project uses utilities from the Kubernetes `kubectl` package for handling Kubernetes-related operations.
