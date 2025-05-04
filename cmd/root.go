@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster"
+	"github.com/OneideLuizSchneider/blitzctl/cmd/container"
 )
 
 var rootCmd = &cobra.Command{
@@ -38,4 +39,5 @@ func Execute() {
 func init() {
 	// Add the cluster command to the root command
 	rootCmd.AddCommand(cluster.GetClusterCmd())
+	rootCmd.AddCommand(container.GetContainerCmd())
 }
