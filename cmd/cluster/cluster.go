@@ -32,7 +32,7 @@ var (
 	clusterCmd = &cobra.Command{
 		Use:     "cluster",
 		Example: listExample,
-		Aliases: []string{"clusters", "cl"},
+		Aliases: []string{"clusters", "cluster", "c", "cl"},
 		Short:   "A brief description of your command",
 		Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:

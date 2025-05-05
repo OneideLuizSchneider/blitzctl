@@ -26,7 +26,7 @@ var (
 This command will Delete a local k8s cluster
 based on cluster the name.`,
 		Example: deleteExamples,
-		Aliases: []string{"c"},
+		Aliases: []string{"delete", "del", "d", "rm", "remove"},
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := cmd.Help(); err != nil {

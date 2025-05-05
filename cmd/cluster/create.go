@@ -30,7 +30,7 @@ using the specified driver and configuration.
 You can use this command to quickly set up a k8s cluster
 for development and testing purposes.`,
 		Example: createExamples,
-		Aliases: []string{"c"},
+		Aliases: []string{"create", "c", "new"},
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := cmd.Help(); err != nil {

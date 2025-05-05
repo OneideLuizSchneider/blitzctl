@@ -23,7 +23,6 @@ func NewlistMinikubeCmd() *cobra.Command {
 	}
 }
 
-// listMinikubeClusters lists all available Minikube clusters
 func listMinikubeClusters(cmd *cobra.Command, args []string) {
 	_, err := exec.LookPath("minikube")
 	if err != nil {
