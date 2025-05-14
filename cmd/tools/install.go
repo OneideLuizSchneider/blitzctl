@@ -73,10 +73,17 @@ func InstallTools(cmd *cobra.Command, args []string) {
 }
 
 func Cleanup() {
-	// Cleanup
-	os.Remove("helm-linux-amd64.tar.gz")
-	os.Remove("helm-darwin-amd64.tar.gz")
-	os.RemoveAll("linux-amd64")
-	os.RemoveAll("darwin-amd64")
+	if err := os.Remove("helm-linux-amd64.tar.gz"); err != nil && !os.IsNotExist(err) {
+		fmt.Printf("⚠️  Failed to remove helm-linux-amd64.tar.gz: %v\n", err)
+	}
+	if err := os.Remove("helm-darwin-amd64.tar.gz"); err != nil && !os.IsNotExist(err) {
+		fmt.Printf("⚠️  Failed to remove helm-darwin-amd64.tar.gz: %v\n", err)
+	}
+	if err := os.RemoveAll("linux-amd64"); err != nil {
+		fmt.Printf("⚠️  Failed to remove linux-amd64 directory: %v\n", err)
+	}
+	if err := os.RemoveAll("darwin-amd64"); err != nil {
+		fmt.Printf("⚠️  Failed to remove darwin-amd64 directory: %v\n", err)
+	}
 	fmt.Println("🧹 Cleanup completed.")
 }
