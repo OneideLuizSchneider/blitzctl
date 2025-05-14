@@ -22,6 +22,10 @@ blitzctl <command> <subcommand> [flags]
 - `install`: Install tools like Minikube or Kind.
 - `upgrade`: Upgrade tools like Minikube or Kind to their latest versions.
 
+##### Tools Commands
+
+- `tools install`: Install additional tools such as Helm.
+
 #### Flags
 
 - `--cluster-name`: Specify the name of the cluster.
@@ -114,6 +118,14 @@ Run a cluster deletion command with debug output enabled:
 blitzctl cluster delete kind --cluster-name=mycluster --debug
 ```
 
+#### Install Helm
+
+Install Helm on your system:
+
+```sh
+blitzctl tools install
+```
+
 ---
 
 ## Tools and Libraries
@@ -136,6 +148,10 @@ blitzctl cluster delete kind --cluster-name=mycluster --debug
 #### [Minikube](https://minikube.sigs.k8s.io/docs/)
 - Minikube is a tool that lets you run Kubernetes locally.
 - `blitzctl` supports Minikube for creating, managing, and upgrading clusters with various drivers and configurations.
+
+#### [Helm](https://helm.sh/)
+- Helm is a package manager for Kubernetes.
+- `blitzctl` can install Helm for you using the `blitzctl tools install` command.
 
 #### [Kubectl Utilities](https://kubernetes.io/docs/reference/kubectl/)
 - The project uses utilities from the Kubernetes `kubectl` package for handling Kubernetes-related operations.
