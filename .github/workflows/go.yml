@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]  
   pull_request:
-    branches: [ "main" ]
+    types: [opened, synchronize, reopened]    
 
 jobs:
 
@@ -16,7 +16,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.23'
+        go-version: '1.24'
     
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v7
