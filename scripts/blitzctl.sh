@@ -73,11 +73,11 @@ Usage:
   sh blitzctl.sh [--version vX.Y.Z] [--bin-dir DIR]
 
 Environment:
-  BLITZCTL_VERSION  If set, install this tagged version (e.g., v0.1.0).
+  BLITZCTL_VERSION If set, install this tagged version (e.g., v0.0.1).
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/$PROJECT_OWNER/$PROJECT_REPO/main/scripts/blitzctl.sh | sh -
-  BLITZCTL_VERSION=v0.1.0 curl -fsSL https://raw.githubusercontent.com/$PROJECT_OWNER/$PROJECT_REPO/main/scripts/blitzctl.sh | sh -
+  BLITZCTL_VERSION=v0.0.1 curl -fsSL https://raw.githubusercontent.com/$PROJECT_OWNER/$PROJECT_REPO/main/scripts/blitzctl.sh | sh -
 EOF
 }
 
