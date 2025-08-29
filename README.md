@@ -4,6 +4,23 @@
 
 Currently supports `macOS` and `Linux`.
 
+## Install
+
+- Quick install (latest):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/OneideLuizSchneider/blitzctl/main/scripts/blitzctl.sh | sh -
+```
+
+- Pin a specific version:
+
+```sh
+BLITZCTL_VERSION=v0.1.0 \
+  curl -fsSL https://raw.githubusercontent.com/OneideLuizSchneider/blitzctl/main/scripts/blitzctl.sh | sh -
+```
+
+The script detects your OS/arch (macOS/Linux, amd64/arm64), downloads the matching `blitzctl` binary from GitHub Releases, and installs it into `/usr/local/bin` (or `~/.local/bin` if not writable).
+
 ## Usage
 
 #### General Command Structure
