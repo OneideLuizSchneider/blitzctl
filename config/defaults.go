@@ -7,8 +7,8 @@ package config
 // - Minikube - container-runtime: docker, containerd, cri-o, or auto (default: auto)
 //   - Note: Not implemented yet
 const (
-	DefaultK8sVersion  = "1.33.0"
-	DefaultDriver      = "docker"
+	DefaultK8sVersion  = "1.33.1"
+	DefaultDriver      = "podman"
 	DefaultClusterName = "blitz-cluster1"
 	DefaultCni         = "cilium"
 )
