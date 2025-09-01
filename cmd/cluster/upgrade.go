@@ -4,8 +4,7 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/provider"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
@@ -16,9 +15,9 @@ var (
 		# Minikube Doc: https://minikube.sigs.k8s.io/docs/start/
 
 		# minikube
-		blitzctl clusters upgrade minikube
-		# kind
-		blitzctl clusters upgrade kind
+		blitzctl cluster upgrade minikube --cluster-name=mycluster --k8s-version=1.33.1
+		# kind (not supported - will show error)
+		blitzctl cluster upgrade kind
 	`))
 
 	upgradeCmd = &cobra.Command{
@@ -39,6 +38,12 @@ using the specified driver and configuration.`,
 )
 
 func init() {
-	upgradeCmd.AddCommand(minikube.NewUpgradeMinikubeCmd())
-	upgradeCmd.AddCommand(kind.NewUpgradeKindCmd())
+	factory := provider.DefaultFactory
+
+	// Register provider commands dynamically
+	for _, providerType := range factory.GetSupportedProviders() {
+		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
+			upgradeCmd.AddCommand(clusterProvider.GetUpgradeCommand())
+		}
+	}
 }

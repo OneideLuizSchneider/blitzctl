@@ -4,8 +4,7 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/provider"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +29,12 @@ are available for use and their current status.`,
 }
 
 func init() {
-	listCmd.AddCommand(minikube.NewlistMinikubeCmd())
-	listCmd.AddCommand(kind.NewlistKindCmd())
+	factory := provider.DefaultFactory
+
+	// Register provider commands dynamically
+	for _, providerType := range factory.GetSupportedProviders() {
+		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
+			listCmd.AddCommand(clusterProvider.GetListCommand())
+		}
+	}
 }

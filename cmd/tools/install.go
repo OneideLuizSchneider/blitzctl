@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
 )
 
@@ -28,11 +29,11 @@ func InstallTools(cmd *cobra.Command, args []string) {
 
 	switch runtime.GOOS {
 	case "linux":
-		url = "https://get.helm.sh/helm-v3.14.4-linux-amd64.tar.gz"
+		url = "https://get.helm.sh/helm-v" + config.DefaultHelmVersion + "-linux-amd64.tar.gz"
 		archive = "helm-linux-amd64.tar.gz"
 		bin = "linux-amd64/helm"
 	case "darwin":
-		url = "https://get.helm.sh/helm-v3.14.4-darwin-amd64.tar.gz"
+		url = "https://get.helm.sh/helm-v" + config.DefaultHelmVersion + "-darwin-amd64.tar.gz"
 		archive = "helm-darwin-amd64.tar.gz"
 		bin = "darwin-amd64/helm"
 	default:

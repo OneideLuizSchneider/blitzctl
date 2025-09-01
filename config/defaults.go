@@ -11,4 +11,6 @@ const (
 	DefaultDriver      = "podman"
 	DefaultClusterName = "blitz-cluster1"
 	DefaultCni         = "cilium"
+
+	DefaultHelmVersion = "v3.18.6"
 )

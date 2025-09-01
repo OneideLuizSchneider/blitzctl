@@ -4,8 +4,7 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/provider"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
@@ -14,9 +13,9 @@ import (
 var (
 	deleteExamples = templates.Examples(i18n.T(`
 		# minikube
-		blitzctl clusters delete minikube --cluster-name=mycluster
+		blitzctl cluster delete minikube --cluster-name=mycluster
 		# kind
-		blitzctl clusters delete kind --cluster-name=mycluster
+		blitzctl cluster delete kind --cluster-name=mycluster
 	`))
 
 	deleteCmd = &cobra.Command{
@@ -37,6 +36,12 @@ based on cluster the name.`,
 )
 
 func init() {
-	deleteCmd.AddCommand(minikube.NewDeleteCmd())
-	deleteCmd.AddCommand(kind.NewDeleteCmd())
+	factory := provider.DefaultFactory
+
+	// Register provider commands dynamically
+	for _, providerType := range factory.GetSupportedProviders() {
+		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
+			deleteCmd.AddCommand(clusterProvider.GetDeleteCommand())
+		}
+	}
 }
