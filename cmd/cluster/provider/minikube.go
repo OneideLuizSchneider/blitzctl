@@ -42,7 +42,6 @@ func (p *MinikubeProvider) Create(options *CreateOptions) error {
 	if options.ClusterName == "" {
 		return fmt.Errorf("❌ The Cluster Name is required")
 	}
-
 	// Extract minikube-specific options from ProviderOptions
 	driver := config.DefaultDriver
 	cni := config.DefaultCni
@@ -242,7 +241,7 @@ func (p *MinikubeProvider) GetCreateCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Create a minikube cluster",
 		Long:    `Create a minikube cluster using the specified driver and configuration.`,
-		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker`,
+		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker --cni=cilium`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &CreateOptions{
@@ -263,10 +262,6 @@ func (p *MinikubeProvider) GetCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&k8sVersion, "k8s-version", config.DefaultK8sVersion, i18n.T("K8s Version."))
 	cmd.Flags().StringVar(&driver, "driver", config.DefaultDriver, i18n.T("Driver."))
 	cmd.Flags().StringVar(&cni, "cni", config.DefaultCni, i18n.T("CNI."))
-
-	if err := cmd.MarkFlagRequired("driver"); err != nil {
-		panic(fmt.Sprintf("❌ Failed to mark 'driver' flag as required: %v", err))
-	}
 
 	return cmd
 }
