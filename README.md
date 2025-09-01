@@ -54,7 +54,7 @@ blitzctl <command> <subcommand> [flags]
 
 Default configurations are defined in `config/defaults.go`:
 
-- **Kubernetes Version**: `1.32.0`
+- **Kubernetes Version**: `1.33.1`
 - **Driver**: `docker`
 - **Cluster Name**: `blitz-cluster1`
 - **CNI Plugin**: `cilium`
@@ -68,15 +68,22 @@ Default configurations are defined in `config/defaults.go`:
 Create a Kubernetes cluster using Minikube with a specific Kubernetes version and container runtime:
 
 ```sh
-blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker
+# podman
+blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.33.1 --driver=podman
+
+# docker
+blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.33.1 --driver=docker
 ```
 
-#### Delete a Kind Cluster
+#### Delete a Cluster
 
-Delete a Kubernetes cluster created with Kind:
+Delete a Kubernetes cluster:
 
 ```sh
+# kind
 blitzctl cluster delete kind --cluster-name=mycluster
+# minikube
+blitzctl cluster delete minikube --cluster-name=mycluster
 ```
 
 #### List All Minikube Clusters

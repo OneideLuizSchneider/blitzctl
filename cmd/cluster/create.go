@@ -4,8 +4,7 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/provider"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
@@ -14,11 +13,13 @@ import (
 var (
 	createExamples = templates.Examples(i18n.T(`
 		# Minikube Doc: https://minikube.sigs.k8s.io/docs/start/
+		# Kind Doc: https://kind.sigs.k8s.io/docs/user/quick-start/
 
-		# podman
-		blitzctl clusters create minikube --cluster-name=mycluster --k8s-version=1.32.0 --container-runtime=podman
-		# docker
-		blitzctl clusters create minikube --cluster-name=mycluster --k8s-version=1.32.0 --container-runtime=docker
+		# Create a minikube cluster
+		blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker
+		
+		# Create a kind cluster
+		blitzctl cluster create kind --cluster-name=mycluster
 	`))
 
 	createCmd = &cobra.Command{
@@ -26,7 +27,7 @@ var (
 		Short: "Create a k8s cluster",
 		Long: `Create a k8s cluster
 This command will create a local k8s cluster
-using the specified driver and configuration.
+using the specified provider and configuration.
 You can use this command to quickly set up a k8s cluster
 for development and testing purposes.`,
 		Example: createExamples,
@@ -41,6 +42,12 @@ for development and testing purposes.`,
 )
 
 func init() {
-	createCmd.AddCommand(minikube.NewCreateMinikubeCmd())
-	createCmd.AddCommand(kind.NewCreatkindCmd())
+	factory := provider.DefaultFactory
+
+	// Register provider commands dynamically
+	for _, providerType := range factory.GetSupportedProviders() {
+		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
+			createCmd.AddCommand(clusterProvider.GetCreateCommand())
+		}
+	}
 }

@@ -4,19 +4,18 @@ Copyright © 2025 Oneide Luiz Schneider
 package cluster
 
 import (
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/kind"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/minikube"
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/provider"
 	"github.com/spf13/cobra"
 )
 
 var installCmd = &cobra.Command{
 	Use:   "install",
-	Short: "Install a k8s cluster",
-	Long: `Install a k8s cluster
-This command will install a k8s cluster
-using the specified driver and configuration.
-You can use this command to quickly set up a k8s cluster
-for development and testing purposes.`,
+	Short: "Install a k8s cluster provider",
+	Long: `Install a k8s cluster provider
+This command will install a k8s cluster provider
+(like kind, minikube, etc.) on your system.
+You can use this command to quickly set up the necessary
+tools for cluster management.`,
 	Example: `blitzctl cluster install minikube`,
 	Aliases: []string{"i"},
 	Args:    cobra.NoArgs,
@@ -28,6 +27,12 @@ for development and testing purposes.`,
 }
 
 func init() {
-	installCmd.AddCommand(minikube.NewInstallMinikubeCmd())
-	installCmd.AddCommand(kind.NewInstallKindCmd())
+	factory := provider.DefaultFactory
+
+	// Register provider commands dynamically
+	for _, providerType := range factory.GetSupportedProviders() {
+		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
+			installCmd.AddCommand(clusterProvider.GetInstallCommand())
+		}
+	}
 }
