@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
@@ -42,9 +43,14 @@ func (p *MinikubeProvider) Create(options *CreateOptions) error {
 	if options.ClusterName == "" {
 		return fmt.Errorf("❌ The Cluster Name is required")
 	}
-	// Extract minikube-specific options from ProviderOptions
-	driver := config.DefaultDriver
-	cni := config.DefaultCni
+
+	// Get configuration manager for defaults
+	configManager := config.GetManager()
+	defaults := configManager.GetDefaults()
+
+	// Extract minikube-specific options from ProviderOptions with config defaults
+	driver := defaults.Driver
+	cni := defaults.CNI
 	if options.ProviderOptions != nil {
 		if d, ok := options.ProviderOptions["driver"].(string); ok && d != "" {
 			driver = d
@@ -81,6 +87,32 @@ func (p *MinikubeProvider) Create(options *CreateOptions) error {
 
 	fmt.Printf("✅ Minikube cluster '%s' created successfully with %s and %s\n", options.ClusterName, options.K8sVersion, driver)
 	fmt.Printf("🔌 CNI: %s\n", cni)
+
+	// Save cluster information to config
+	clusterInfo := config.ClusterInfo{
+		Name:       options.ClusterName,
+		Provider:   string(Minikube),
+		K8sVersion: options.K8sVersion,
+		Status:     "running",
+		CreatedAt:  time.Now(),
+		Driver:     driver,
+		CNI:        cni,
+		Options:    make(map[string]string),
+	}
+
+	// Add provider-specific options to the cluster info
+	if options.ProviderOptions != nil {
+		for k, v := range options.ProviderOptions {
+			if str, ok := v.(string); ok {
+				clusterInfo.Options[k] = str
+			}
+		}
+	}
+
+	if err := configManager.AddCluster(clusterInfo); err != nil {
+		fmt.Printf("⚠️ Warning: Failed to save cluster information: %v\n", err)
+	}
+
 	return nil
 }
 
@@ -111,6 +143,13 @@ func (p *MinikubeProvider) Delete(options *DeleteOptions) error {
 	}
 
 	fmt.Printf("✅ Minikube cluster '%s' deleted successfully\n", options.ClusterName)
+
+	// Remove cluster information from config
+	configManager := config.GetManager()
+	if err := configManager.RemoveCluster(options.ClusterName, string(Minikube)); err != nil {
+		fmt.Printf("⚠️ Warning: Failed to remove cluster from configuration: %v\n", err)
+	}
+
 	return nil
 }
 
