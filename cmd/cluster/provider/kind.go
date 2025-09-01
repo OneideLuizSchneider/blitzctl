@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
@@ -120,13 +121,91 @@ func (p *KindProvider) List(options *ListOptions) error {
 }
 
 func (p *KindProvider) Upgrade(options *UpgradeOptions) error {
-	// Kind doesn't support direct cluster upgrades, would need to recreate
-	return fmt.Errorf("❌ Kind doesn't support cluster upgrades. Please delete and recreate the cluster")
+	_, err := exec.LookPath("kind")
+	if err != nil {
+		fmt.Println("❌ kind is not installed. Please install kind to use this command.")
+		os.Exit(1)
+	}
+	switch runtime.GOOS {
+	case "darwin":
+		upgradeCmd := exec.Command("brew", "upgrade", "kind")
+		// Set up real-time output streaming
+		upgradeCmd.Stdout = os.Stdout
+		upgradeCmd.Stderr = os.Stderr
+		if err := upgradeCmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "❗Error Upgrading kind\n")
+			os.Exit(1)
+		}
+	case "linux":
+		upgradeCmd := exec.Command("sh", "-c", `
+            curl -Lo /usr/local/bin/kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64 &&
+            chmod +x /usr/local/bin/kind
+        `)
+		// Set up real-time output streaming
+		upgradeCmd.Stdout = os.Stdout
+		upgradeCmd.Stderr = os.Stderr
+		if err := upgradeCmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "❗Error Upgrading kind\n")
+			os.Exit(1)
+		}
+	case "windows":
+		fmt.Println("❌ Running on an unsupported OS")
+		os.Exit(1)
+	default:
+		fmt.Println("❌ Running on an unsupported OS")
+		os.Exit(1)
+	}
+	fmt.Printf("✅ kind Upgraded successfully!")
+
+	return nil
 }
 
 func (p *KindProvider) Install(options *InstallOptions) error {
-	// This would handle Kind installation logic
-	return fmt.Errorf("❌ Kind installation not implemented yet")
+	_, err := exec.LookPath("docker")
+	if err != nil {
+		fmt.Println("❌ Docker is not installed. Please install Docker to use this command.")
+		os.Exit(1)
+	}
+
+	switch runtime.GOOS {
+	case "darwin":
+		fmt.Println("Installing kind on macOS...")
+		fmt.Println("Please make sure you have Brew installed.")
+		fmt.Println("You can install Brew by running the following command:")
+		fmt.Println("https://brew.sh/")
+		// Check if Minikube is installed
+		_, err := exec.LookPath("brew")
+		if err != nil {
+			fmt.Println("❌ Brew is not installed. Please install Brew to use this command.")
+			os.Exit(1)
+		}
+		getCmd := exec.Command("brew", "install", "kind")
+		output, err := getCmd.Output()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "❌ Error installing kind: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("Installing kind...")
+		fmt.Println(string(output))
+	case "linux":
+		fmt.Println("Installing kind on Linux...")
+		fmt.Println("Please make sure you have curl installed.")
+		fmt.Println("You can install curl by running the following command:")
+		fmt.Println("sudo apt-get install curl")
+		getCmd := exec.Command("curl", "-Lo", "/usr/local/bin/kind", "https://kind.sigs.k8s.io/dl/v0.11.0/kind-$(uname)-amd64")
+		output, err := getCmd.Output()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "❌ Error installing kind: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println(string(output))
+	case "windows":
+		fmt.Println("❌ Running on an unsupported OS")
+	default:
+		fmt.Println("❌ Running on an unsupported OS")
+	}
+
+	return nil
 }
 
 // Command builders - these create cobra commands that use the provider

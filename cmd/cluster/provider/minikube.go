@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
@@ -132,37 +133,100 @@ func (p *MinikubeProvider) List(options *ListOptions) error {
 }
 
 func (p *MinikubeProvider) Upgrade(options *UpgradeOptions) error {
-	if err := p.Validate(); err != nil {
-		return err
+	_, err := exec.LookPath("minikube")
+	if err != nil {
+		fmt.Println("❌ Minikube is not installed. Please install Minikube to use this command.")
+		os.Exit(1)
+	}
+	checkCmd := exec.Command("minikube", "update-check")
+	// Set up real-time output streaming
+	checkCmd.Stdout = os.Stdout
+	checkCmd.Stderr = os.Stderr
+	// Start and wait for the command to complete
+	if err := checkCmd.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "❗Error Checking Minikube\n")
+		os.Exit(1)
 	}
 
-	if options.ClusterName == "" {
-		return fmt.Errorf("❌ The Cluster Name is required")
+	switch runtime.GOOS {
+	case "darwin":
+		upgradeCmd := exec.Command("brew", "upgrade", "minikube")
+		// Set up real-time output streaming
+		upgradeCmd.Stdout = os.Stdout
+		upgradeCmd.Stderr = os.Stderr
+		if err := upgradeCmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "❗Error Upgrading Minikube\n")
+			os.Exit(1)
+		}
+	case "linux":
+		// Step 1: Download the latest Minikube binary
+		downloadCmd := exec.Command("curl", "-LO", "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64")
+		downloadCmd.Stdout = os.Stdout
+		downloadCmd.Stderr = os.Stderr
+		if err := downloadCmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "❗Error Downloading Minikube\n")
+			os.Exit(1)
+		}
+
+		// Step 2: Install the downloaded binary
+		installCmd := exec.Command("sudo", "install", "minikube-linux-amd64", "/usr/local/bin/minikube")
+		installCmd.Stdout = os.Stdout
+		installCmd.Stderr = os.Stderr
+		if err := installCmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "❗Error Installing Minikube\n")
+			os.Exit(1)
+		}
+	case "windows":
+		fmt.Println("❌ Running on an unsupported OS")
+		os.Exit(1)
+	default:
+		fmt.Println("❌ Running on an unsupported OS")
+		os.Exit(1)
 	}
 
-	upgradeCmd := exec.Command(
-		"minikube",
-		"start",
-		"--profile="+options.ClusterName,
-		"--kubernetes-version="+options.K8sVersion,
-	)
-
-	upgradeCmd.Stdout = os.Stdout
-	upgradeCmd.Stderr = os.Stderr
-
-	fmt.Printf("🔄 Upgrading minikube cluster...\n")
-
-	if err := upgradeCmd.Run(); err != nil {
-		return fmt.Errorf("❌ Error upgrading minikube cluster: %v", err)
-	}
-
-	fmt.Printf("✅ Minikube cluster '%s' upgraded successfully to %s\n", options.ClusterName, options.K8sVersion)
 	return nil
 }
 
 func (p *MinikubeProvider) Install(options *InstallOptions) error {
-	// This would handle Minikube installation logic
-	return fmt.Errorf("❌ Minikube installation not implemented yet")
+	switch runtime.GOOS {
+	case "darwin":
+		fmt.Println("Installing minikube on macOS...")
+		fmt.Println("Please make sure you have Brew installed.")
+		fmt.Println("You can install Brew by running the following command:")
+		fmt.Println("https://brew.sh/")
+		_, err := exec.LookPath("brew")
+		if err != nil {
+			fmt.Println("❌ Brew is not installed. Please install Brew to use this command.")
+			os.Exit(1)
+		}
+		getCmd := exec.Command("brew", "install", "minikube")
+		output, err := getCmd.Output()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "❌ Error installing minikube: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("Installing minikube...")
+		fmt.Println(string(output))
+	case "linux":
+		fmt.Println("Installing minikube on Linux...")
+		fmt.Println("Please make sure you have curl installed.")
+		fmt.Println("You can install curl by running the following command:")
+		fmt.Println("sudo apt-get install curl")
+		getCmd := exec.Command("curl", "-LO", "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64")
+		output, err := getCmd.Output()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "❌ Error installing minikube: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("Installing minikube...")
+		fmt.Println(string(output))
+	case "windows":
+		fmt.Println("❌ Running on an unsupported OS")
+	default:
+		fmt.Println("❌ Running on an unsupported OS")
+	}
+
+	return nil
 }
 
 // Command builders
