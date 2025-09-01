@@ -99,6 +99,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# blitzctl configuration
+.blitzctl/
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json

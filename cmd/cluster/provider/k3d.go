@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
@@ -67,6 +68,31 @@ func (p *K3dProvider) Create(options *CreateOptions) error {
 	}
 
 	fmt.Printf("✅ K3d cluster '%s' created successfully\n", options.ClusterName)
+
+	// Save cluster information to config
+	configManager := config.GetManager()
+	clusterInfo := config.ClusterInfo{
+		Name:       options.ClusterName,
+		Provider:   string(K3d),
+		K8sVersion: options.K8sVersion,
+		Status:     "running",
+		CreatedAt:  time.Now(),
+		Options:    make(map[string]string),
+	}
+
+	// Add provider-specific options to the cluster info
+	if options.ProviderOptions != nil {
+		for k, v := range options.ProviderOptions {
+			if str, ok := v.(string); ok {
+				clusterInfo.Options[k] = str
+			}
+		}
+	}
+
+	if err := configManager.AddCluster(clusterInfo); err != nil {
+		fmt.Printf("⚠️ Warning: Failed to save cluster information: %v\n", err)
+	}
+
 	return nil
 }
 
@@ -96,6 +122,13 @@ func (p *K3dProvider) Delete(options *DeleteOptions) error {
 	}
 
 	fmt.Printf("✅ K3d cluster '%s' deleted successfully\n", options.ClusterName)
+
+	// Remove cluster information from config
+	configManager := config.GetManager()
+	if err := configManager.RemoveCluster(options.ClusterName, string(K3d)); err != nil {
+		fmt.Printf("⚠️ Warning: Failed to remove cluster from configuration: %v\n", err)
+	}
+
 	return nil
 }
 

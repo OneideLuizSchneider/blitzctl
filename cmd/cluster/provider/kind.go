@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
@@ -70,6 +71,31 @@ func (p *KindProvider) Create(options *CreateOptions) error {
 	}
 
 	fmt.Printf("✅ Kind cluster '%s' created successfully\n", options.ClusterName)
+
+	// Save cluster information to config
+	configManager := config.GetManager()
+	clusterInfo := config.ClusterInfo{
+		Name:       options.ClusterName,
+		Provider:   string(Kind),
+		K8sVersion: options.K8sVersion,
+		Status:     "running",
+		CreatedAt:  time.Now(),
+		Options:    make(map[string]string),
+	}
+
+	// Add provider-specific options to the cluster info
+	if options.ProviderOptions != nil {
+		for k, v := range options.ProviderOptions {
+			if str, ok := v.(string); ok {
+				clusterInfo.Options[k] = str
+			}
+		}
+	}
+
+	if err := configManager.AddCluster(clusterInfo); err != nil {
+		fmt.Printf("⚠️ Warning: Failed to save cluster information: %v\n", err)
+	}
+
 	return nil
 }
 
@@ -101,6 +127,13 @@ func (p *KindProvider) Delete(options *DeleteOptions) error {
 	}
 
 	fmt.Printf("✅ Kind cluster '%s' deleted successfully\n", options.ClusterName)
+
+	// Remove cluster information from config
+	configManager := config.GetManager()
+	if err := configManager.RemoveCluster(options.ClusterName, string(Kind)); err != nil {
+		fmt.Printf("⚠️ Warning: Failed to remove cluster from configuration: %v\n", err)
+	}
+
 	return nil
 }
 
