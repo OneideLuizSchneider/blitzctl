@@ -15,8 +15,8 @@ var (
 		# Minikube Doc: https://minikube.sigs.k8s.io/docs/start/
 
 		# minikube
-		blitzctl cluster upgrade minikube --cluster-name=mycluster --k8s-version=1.33.1
-		# kind (not supported - will show error)
+		blitzctl cluster upgrade minikube
+		# kind
 		blitzctl cluster upgrade kind
 	`))
 
@@ -39,7 +39,6 @@ using the specified driver and configuration.`,
 
 func init() {
 	factory := provider.DefaultFactory
-
 	// Register provider commands dynamically
 	for _, providerType := range factory.GetSupportedProviders() {
 		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {

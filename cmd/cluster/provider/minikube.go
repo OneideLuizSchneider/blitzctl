@@ -155,8 +155,13 @@ func (p *MinikubeProvider) Upgrade(options *UpgradeOptions) error {
 		upgradeCmd.Stdout = os.Stdout
 		upgradeCmd.Stderr = os.Stderr
 		if err := upgradeCmd.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "❗Error Upgrading Minikube\n")
-			os.Exit(1)
+			linkCmd := exec.Command("brew", "link", "--overwrite", "minikube")
+			linkCmd.Stdout = os.Stdout
+			linkCmd.Stderr = os.Stderr
+			if err := linkCmd.Run(); err != nil {
+				fmt.Fprintf(os.Stderr, "❗Error Linking Minikube\n")
+				os.Exit(1)
+			}
 		}
 	case "linux":
 		// Step 1: Download the latest Minikube binary
@@ -313,7 +318,7 @@ func (p *MinikubeProvider) GetUpgradeCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Upgrade a minikube cluster",
 		Long:    `Upgrade a minikube cluster to a new Kubernetes version.`,
-		Example: `blitzctl cluster upgrade minikube --cluster-name=mycluster --k8s-version=1.33.1`,
+		Example: `blitzctl cluster upgrade minikube`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &UpgradeOptions{
@@ -324,13 +329,6 @@ func (p *MinikubeProvider) GetUpgradeCommand() *cobra.Command {
 			}
 			return p.Upgrade(options)
 		},
-	}
-
-	cmd.Flags().StringVar(&clusterName, "cluster-name", config.DefaultClusterName, i18n.T("Cluster Name."))
-	cmd.Flags().StringVar(&k8sVersion, "k8s-version", config.DefaultK8sVersion, i18n.T("K8s Version."))
-
-	if err := cmd.MarkFlagRequired("cluster-name"); err != nil {
-		panic(fmt.Sprintf("❌ Failed to mark 'cluster-name' flag as required: %v", err))
 	}
 
 	return cmd
