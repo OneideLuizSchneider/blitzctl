@@ -121,8 +121,18 @@ func (p *K3dProvider) Upgrade(options *UpgradeOptions) error {
 }
 
 func (p *K3dProvider) Install(options *InstallOptions) error {
-	// This would handle K3d installation logic
-	return fmt.Errorf("❌ K3d installation not implemented yet")
+	installCmd := exec.Command("bash", "-c", "curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash")
+	installCmd.Stdout = os.Stdout
+	installCmd.Stderr = os.Stderr
+
+	fmt.Printf("🔄 Installing K3d...\n")
+
+	if err := installCmd.Run(); err != nil {
+		return fmt.Errorf("❌ Error installing K3d: %v", err)
+	}
+
+	fmt.Printf("✅ K3d installed successfully\n")
+	return nil
 }
 
 // Command builders
