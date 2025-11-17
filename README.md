@@ -1,12 +1,12 @@
 # blitzctl
 
-`blitzctl` is a CLI tool for managing local Kubernetes environments. It simplifies the creation, deletion, upgrading, and management of Kubernetes clusters using tools like `Minikube`, `Kind`, and `K3d`.
+`blitzctl` is a CLI tool for managing local Kubernetes environments. It simplifies the creation, deletion, upgrading, and management of Kubernetes clusters using tools like `Minikube` and `Kind`.
 
 Currently supports `macOS` and `Linux`.
 
 ## Key Features
 
-- 🚀 **Multi-Provider Support**: Kind, Minikube, and K3d
+- 🚀 **Multi-Provider Support**: Kind and Minikube
 - ⚙️ **Smart Configuration**: Powered by Viper with file, environment, and flag support
 - 🔄 **Context Switching**: Easy switching between different cluster environments
 - 📊 **Cluster State Tracking**: Automatic tracking of created clusters and their metadata
@@ -24,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/OneideLuizSchneider/blitzctl/main/s
 - Pin a specific version:
 
 ```sh
-BLITZCTL_VERSION=v0.0.1 \
+BLITZCTL_VERSION=v0.0.3 \
   curl -fsSL https://raw.githubusercontent.com/OneideLuizSchneider/blitzctl/main/scripts/blitzctl.sh | sh -
 ```
 
@@ -72,6 +72,8 @@ blitzctl <command> <subcommand> [flags]
 - `list`: List all available clusters.
 - `install`: Install tools like Minikube or Kind.
 - `upgrade`: Upgrade tools like Minikube or Kind to their latest versions.
+- `start` `start`: Only available for `minikube`
+  - It'll `start` or `stop` a cluster
 
 ##### Configuration Commands
 
@@ -290,7 +292,6 @@ blitzctl config get driver  # Shows: containerd
 # Create clusters with your configured defaults
 blitzctl cluster create minikube --cluster-name prod-cluster
 blitzctl cluster create kind --cluster-name dev-cluster
-blitzctl cluster create k3d --cluster-name test-cluster
 
 # View all managed clusters
 blitzctl config list
@@ -298,7 +299,6 @@ blitzctl config list
 # Managed Clusters:
 #   ✅ prod-cluster (minikube) - 1.34.4 - Created: 2025-09-01 10:30:00
 #   ✅ dev-cluster (kind) - 1.34.4 - Created: 2025-09-01 10:35:00
-#   ✅ test-cluster (k3d) - 1.34.4 - Created: 2025-09-01 10:40:00
 ```
 
 ### Context Management Examples
@@ -313,7 +313,6 @@ blitzctl context list
 # ==========================
 #   ✅ prod-cluster (minikube) - 1.34.4
 #   ✅ dev-cluster (kind) - 1.34.4
-#   ✅ test-cluster (k3d) - 1.34.4
 
 # Switch to development cluster
 blitzctl context use dev-cluster kind
@@ -337,12 +336,10 @@ blitzctl config set cni cilium
 # 2. Create different clusters for different purposes
 blitzctl cluster create kind --cluster-name frontend-dev
 blitzctl cluster create minikube --cluster-name backend-dev --driver podman
-blitzctl cluster create k3d --cluster-name integration-test
 
 # 3. Switch between environments as needed
 blitzctl context use frontend-dev kind     # Work on frontend
 blitzctl context use backend-dev minikube  # Work on backend
-blitzctl context use integration-test k3d  # Run integration tests
 
 # 4. Check what you're currently working on
 blitzctl context current
@@ -378,7 +375,6 @@ blitzctl config set k8s-version 1.34.4
 # 2. Create multiple environments
 blitzctl cluster create kind --cluster-name frontend-dev
 blitzctl cluster create minikube --cluster-name backend-dev --driver podman  
-blitzctl cluster create k3d --cluster-name staging
 
 # 3. View all your environments
 blitzctl config list
@@ -390,9 +386,6 @@ blitzctl context use frontend-dev kind
 
 blitzctl context use backend-dev minikube  
 # ... do backend development work ...
-
-blitzctl context use staging k3d
-# ... run staging tests ...
 
 # 5. Check what you're currently working on
 blitzctl context current

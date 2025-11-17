@@ -27,7 +27,12 @@ var (
 		# Upgrade a Minikube cluster
 		blitzctl cluster upgrade minikube		
 		# Upgrade a Kind cluster
-		blitzctl cluster upgrade kind`))
+		blitzctl cluster upgrade kind
+
+		# Stop a Minikube cluster
+		blitzctl cluster stop minikube --cluster-name <cluster-name>
+		# Start a Minikube cluster
+		blitzctl cluster start minikube --cluster-name <cluster-name>`))
 
 	clusterCmd = &cobra.Command{
 		Use:     "cluster",
@@ -59,4 +64,7 @@ func init() {
 	clusterCmd.AddCommand(createCmd)
 	clusterCmd.AddCommand(deleteCmd)
 	clusterCmd.AddCommand(upgradeCmd)
+
+	clusterCmd.AddCommand(startCmd)
+	clusterCmd.AddCommand(stopCmd)
 }

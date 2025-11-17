@@ -116,7 +116,7 @@ func (p *MinikubeProvider) Create(options *CreateOptions) error {
 	return nil
 }
 
-func (p *MinikubeProvider) Delete(options *DeleteOptions) error {
+func (p *MinikubeProvider) Delete(options *Default) error {
 	if err := p.Validate(); err != nil {
 		return err
 	}
@@ -272,6 +272,68 @@ func (p *MinikubeProvider) Install(options *InstallOptions) error {
 	return nil
 }
 
+func (p *MinikubeProvider) Stop(options *Default) error {
+	if err := p.Validate(); err != nil {
+		return err
+	}
+
+	if options.ClusterName == "" {
+		return fmt.Errorf("❌ The Cluster Name is required")
+	}
+
+	createCmd := exec.Command(
+		"minikube",
+		"stop",
+		"--profile="+options.ClusterName,
+	)
+
+	createCmd.Stdout = os.Stdout
+	createCmd.Stderr = os.Stderr
+
+	fmt.Printf("Debug: Running command: %s\n", createCmd.String())
+	fmt.Printf("Debug: Command Args: %v\n", createCmd.Args)
+	fmt.Printf("🔄 Running...\n")
+
+	if err := createCmd.Run(); err != nil {
+		return fmt.Errorf("❌ Error creating minikube cluster: %v", err)
+	}
+
+	fmt.Printf("✅ Minikube cluster '%s' created successfully\n", options.ClusterName)
+
+	return nil
+}
+
+func (p *MinikubeProvider) Start(options *Default) error {
+	if err := p.Validate(); err != nil {
+		return err
+	}
+
+	if options.ClusterName == "" {
+		return fmt.Errorf("❌ The Cluster Name is required")
+	}
+
+	createCmd := exec.Command(
+		"minikube",
+		"start",
+		"--profile="+options.ClusterName,
+	)
+
+	createCmd.Stdout = os.Stdout
+	createCmd.Stderr = os.Stderr
+
+	fmt.Printf("Debug: Running command: %s\n", createCmd.String())
+	fmt.Printf("Debug: Command Args: %v\n", createCmd.Args)
+	fmt.Printf("🔄 Running...\n")
+
+	if err := createCmd.Run(); err != nil {
+		return fmt.Errorf("❌ Error creating minikube cluster: %v", err)
+	}
+
+	fmt.Printf("✅ Minikube cluster '%s' created successfully\n", options.ClusterName)
+
+	return nil
+}
+
 // Command builders
 func (p *MinikubeProvider) GetCreateCommand() *cobra.Command {
 	var clusterName, k8sVersion, driver, cni string
@@ -315,7 +377,7 @@ func (p *MinikubeProvider) GetDeleteCommand() *cobra.Command {
 		Example: `blitzctl cluster delete minikube --cluster-name=mycluster`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			options := &DeleteOptions{
+			options := &Default{
 				ClusterName: clusterName,
 			}
 			return p.Delete(options)
@@ -379,4 +441,52 @@ func (p *MinikubeProvider) GetInstallCommand() *cobra.Command {
 			return p.Install(&InstallOptions{})
 		},
 	}
+}
+
+func (p *MinikubeProvider) GetStartCommand() *cobra.Command {
+	var clusterName string
+
+	cmd := &cobra.Command{
+		Use:     "minikube",
+		Short:   "Start a minikube cluster",
+		Long:    `Start a minikube cluster.`,
+		Example: `blitzctl cluster start minikube --cluster-name <cluster-name>`,
+		Aliases: []string{"mini", "m"},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			options := &Default{
+				ClusterName: clusterName,
+			}
+			return p.Start(options)
+		},
+	}
+	cmd.Flags().StringVar(&clusterName, "cluster-name", config.DefaultClusterName, i18n.T("Cluster Name."))
+	if err := cmd.MarkFlagRequired("cluster-name"); err != nil {
+		panic(fmt.Sprintf("❌ Failed to mark 'cluster-name' flag as required: %v", err))
+	}
+
+	return cmd
+}
+
+func (p *MinikubeProvider) GetStopCommand() *cobra.Command {
+	var clusterName string
+
+	cmd := &cobra.Command{
+		Use:     "minikube",
+		Short:   "Stop a minikube cluster",
+		Long:    `Stop a minikube cluster.`,
+		Example: `blitzctl cluster stop minikube --cluster-name <cluster-name>`,
+		Aliases: []string{"mini", "m"},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			options := &Default{
+				ClusterName: clusterName,
+			}
+			return p.Stop(options)
+		},
+	}
+	cmd.Flags().StringVar(&clusterName, "cluster-name", config.DefaultClusterName, i18n.T("Cluster Name."))
+	if err := cmd.MarkFlagRequired("cluster-name"); err != nil {
+		panic(fmt.Sprintf("❌ Failed to mark 'cluster-name' flag as required: %v", err))
+	}
+
+	return cmd
 }
