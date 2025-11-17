@@ -29,7 +29,6 @@ func NewClusterProviderFactory() *ClusterProviderFactory {
 func (f *ClusterProviderFactory) registerBuiltInProviders() {
 	f.RegisterProvider(Kind, NewKindProvider)
 	f.RegisterProvider(Minikube, NewMinikubeProvider)
-	f.RegisterProvider(K3d, NewK3dProvider)
 }
 
 // RegisterProvider allows registering custom providers

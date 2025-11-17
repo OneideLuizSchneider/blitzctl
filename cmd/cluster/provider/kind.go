@@ -99,7 +99,7 @@ func (p *KindProvider) Create(options *CreateOptions) error {
 	return nil
 }
 
-func (p *KindProvider) Delete(options *DeleteOptions) error {
+func (p *KindProvider) Delete(options *Default) error {
 	if err := p.Validate(); err != nil {
 		return err
 	}
@@ -135,6 +135,40 @@ func (p *KindProvider) Delete(options *DeleteOptions) error {
 	}
 
 	return nil
+}
+
+func (p *KindProvider) Start(options *Default) error {
+	return fmt.Errorf("❌ kind doesn't support cluster start. Please delete and recreate the cluster")
+}
+
+func (p *KindProvider) Stop(options *Default) error {
+	return fmt.Errorf("❌ kind doesn't support cluster stop. Please delete and recreate the cluster")
+}
+
+func (p *KindProvider) GetStartCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:     "kind",
+		Short:   "Start a kind cluster",
+		Long:    `Kind doesn't support direct cluster upgrades. You need to delete and recreate the cluster.`,
+		Example: `blitzctl cluster start kind`,
+		Aliases: []string{"kind", "k"},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return p.Start(&Default{})
+		},
+	}
+}
+
+func (p *KindProvider) GetStopCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:     "kind",
+		Short:   "Stop a kind cluster",
+		Long:    `Kind doesn't support direct cluster upgrades. You need to delete and recreate the cluster.`,
+		Example: `blitzctl cluster stop kind`,
+		Aliases: []string{"kind", "k"},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return p.Stop(&Default{})
+		},
+	}
 }
 
 func (p *KindProvider) List(options *ListOptions) error {
@@ -282,7 +316,7 @@ func (p *KindProvider) GetDeleteCommand() *cobra.Command {
 		Example: `blitzctl cluster delete kind --cluster-name=mycluster`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			options := &DeleteOptions{
+			options := &Default{
 				ClusterName: clusterName,
 			}
 			return p.Delete(options)
