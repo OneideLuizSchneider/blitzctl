@@ -6,11 +6,14 @@ package config
 // Driver for Minikube: docker, podman, virtualbox, vmware, kvm2, hyperkit, qemu, ssh, or path to a driver binary (default: docker)
 // - Minikube - container-runtime: docker, containerd, cri-o, or auto (default: auto)
 //   - Note: Not implemented yet
+//
+// - k8s release versions can be found at:
+//   - https://kubernetes.io/releases/
 const (
-	DefaultK8sVersion  = "1.33.4"
+	DefaultK8sVersion  = "1.34.2"
 	DefaultDriver      = "docker"
 	DefaultClusterName = "blitz-cluster1"
 	DefaultCni         = "cilium"
 
-	DefaultHelmVersion = "v3.18.6"
+	DefaultHelmVersion = "v3.19.2"
 )
