@@ -29,12 +29,7 @@ are available for use and their current status.`,
 }
 
 func init() {
-	factory := provider.DefaultFactory
-
-	// Register provider commands dynamically
-	for _, providerType := range factory.GetSupportedProviders() {
-		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
-			listCmd.AddCommand(clusterProvider.GetListCommand())
-		}
+	for _, clusterProvider := range provider.GetProviders() {
+		listCmd.AddCommand(clusterProvider.GetListCommand())
 	}
 }

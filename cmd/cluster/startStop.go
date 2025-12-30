@@ -53,12 +53,8 @@ using the specified driver and configuration.`,
 )
 
 func init() {
-	factory := provider.DefaultFactory
-	// Register provider commands dynamically
-	for _, providerType := range factory.GetSupportedProviders() {
-		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
-			startCmd.AddCommand(clusterProvider.GetStartCommand())
-			stopCmd.AddCommand(clusterProvider.GetStopCommand())
-		}
+	for _, clusterProvider := range provider.GetProviders() {
+		startCmd.AddCommand(clusterProvider.GetStartCommand())
+		stopCmd.AddCommand(clusterProvider.GetStopCommand())
 	}
 }

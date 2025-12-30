@@ -27,12 +27,7 @@ tools for cluster management.`,
 }
 
 func init() {
-	factory := provider.DefaultFactory
-
-	// Register provider commands dynamically
-	for _, providerType := range factory.GetSupportedProviders() {
-		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
-			installCmd.AddCommand(clusterProvider.GetInstallCommand())
-		}
+	for _, clusterProvider := range provider.GetProviders() {
+		installCmd.AddCommand(clusterProvider.GetInstallCommand())
 	}
 }

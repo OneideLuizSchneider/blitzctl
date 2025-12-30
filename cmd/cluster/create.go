@@ -42,12 +42,7 @@ for development and testing purposes.`,
 )
 
 func init() {
-	factory := provider.DefaultFactory
-
-	// Register provider commands dynamically
-	for _, providerType := range factory.GetSupportedProviders() {
-		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
-			createCmd.AddCommand(clusterProvider.GetCreateCommand())
-		}
+	for _, clusterProvider := range provider.GetProviders() {
+		createCmd.AddCommand(clusterProvider.GetCreateCommand())
 	}
 }

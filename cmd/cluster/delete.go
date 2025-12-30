@@ -36,12 +36,7 @@ based on cluster the name.`,
 )
 
 func init() {
-	factory := provider.DefaultFactory
-
-	// Register provider commands dynamically
-	for _, providerType := range factory.GetSupportedProviders() {
-		if clusterProvider, err := factory.CreateProvider(providerType); err == nil {
-			deleteCmd.AddCommand(clusterProvider.GetDeleteCommand())
-		}
+	for _, clusterProvider := range provider.GetProviders() {
+		deleteCmd.AddCommand(clusterProvider.GetDeleteCommand())
 	}
 }
