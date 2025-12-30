@@ -14,14 +14,17 @@ import (
 	"github.com/OneideLuizSchneider/blitzctl/cmd/container"
 	contextCmd "github.com/OneideLuizSchneider/blitzctl/cmd/context"
 	"github.com/OneideLuizSchneider/blitzctl/cmd/tools"
+	versionCmdPkg "github.com/OneideLuizSchneider/blitzctl/cmd/version"
 	"github.com/OneideLuizSchneider/blitzctl/config"
+	"github.com/OneideLuizSchneider/blitzctl/internal/version"
 )
 
 var (
 	configFile string
 	rootCmd    = &cobra.Command{
-		Use:   "blitzctl",
-		Short: "The k8s local environment manager",
+		Use:     "blitzctl",
+		Version: version.String(),
+		Short:   "The k8s local environment manager",
 		Long: `A simple CLI tool to manage local Kubernetes environments.
 It allows you to create, delete, and manage local Kubernetes clusters
 using various drivers and configurations. It is designed to be
@@ -47,6 +50,7 @@ func Execute() {
 func init() {
 	// Initialize configuration before command execution
 	cobra.OnInitialize(initConfig)
+	rootCmd.SetVersionTemplate("{{printf \"%s\\n\" .Version}}")
 
 	// Add global flags
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file (default is $HOME/.blitzctl/config.yaml)")
@@ -57,6 +61,7 @@ func init() {
 	rootCmd.AddCommand(container.GetContainerCmd())
 	rootCmd.AddCommand(contextCmd.GetContextCmd())
 	rootCmd.AddCommand(tools.GetToolsmd())
+	rootCmd.AddCommand(versionCmdPkg.GetVersionCmd())
 }
 
 // initConfig reads in config file and ENV variables

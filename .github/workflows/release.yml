@@ -25,7 +25,20 @@ jobs:
           go-version-file: go.mod
 
       - name: Build
-        run: go build -v ./...
+        shell: bash
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME}"
+          else
+            VERSION="dev-$(echo "${GITHUB_SHA}" | cut -c1-7)"
+          fi
+          COMMIT="$(git rev-parse --short HEAD)"
+          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          LDFLAGS="-s -w"
+          LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.Version=${VERSION}"
+          LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.GitCommit=${COMMIT}"
+          LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.BuildDate=${BUILD_DATE}"
+          go build -trimpath -ldflags="${LDFLAGS}" ./...
 
       - name: Test
         run: go test -v ./...
@@ -53,6 +66,7 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: 0
+        shell: bash
         run: |
           mkdir -p dist
           BIN_NAME="blitzctl"
@@ -60,7 +74,18 @@ jobs:
           if [ "$GOOS" = "windows" ]; then EXT=".exe"; fi
           OUT="dist/${BIN_NAME}_${GOOS}_${GOARCH}${EXT}"
           echo "Building ${OUT}"
-          go build -trimpath -ldflags='-s -w' -o "$OUT" .
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME}"
+          else
+            VERSION="dev-$(echo "${GITHUB_SHA}" | cut -c1-7)"
+          fi
+          COMMIT="$(git rev-parse --short HEAD)"
+          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          LDFLAGS="-s -w"
+          LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.Version=${VERSION}"
+          LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.GitCommit=${COMMIT}"
+          LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.BuildDate=${BUILD_DATE}"
+          go build -trimpath -ldflags="${LDFLAGS}" -o "$OUT" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6
@@ -90,4 +115,3 @@ jobs:
             dist/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

@@ -65,6 +65,7 @@ blitzctl <command> <subcommand> [flags]
 
 #### Commands
 
+- `version`: Print the current `blitzctl` version.
 ##### Cluster Commands
 
 - `create`: Create a Kubernetes cluster.
@@ -94,6 +95,7 @@ blitzctl <command> <subcommand> [flags]
 
 #### Flags
 
+- `--version`: Print the installed `blitzctl` version and exit.
 - `--cluster-name`: Specify the name of the cluster.
 - `--k8s-version`: Specify the Kubernetes version.
 - `--driver`: Specify the driver (e.g., Docker, Podman, virtualbox, parallels, hyperkit, vmware, qemu2, vfkit).
