@@ -342,7 +342,7 @@ func (p *MinikubeProvider) GetCreateCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Create a minikube cluster",
 		Long:    `Create a minikube cluster using the specified driver and configuration.`,
-		Example: `blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker --cni=cilium`,
+		Example: `blitzctl create cluster --provider minikube --cluster-name=mycluster --k8s-version=1.32.0 --driver=docker --cni=cilium`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &CreateOptions{
@@ -374,7 +374,7 @@ func (p *MinikubeProvider) GetDeleteCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Delete a minikube cluster",
 		Long:    `Delete a minikube cluster by profile name.`,
-		Example: `blitzctl cluster delete minikube --cluster-name=mycluster`,
+		Example: `blitzctl delete cluster --provider minikube --cluster-name=mycluster`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &Default{
@@ -398,7 +398,7 @@ func (p *MinikubeProvider) GetListCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "List all minikube clusters",
 		Long:    `List all available minikube local clusters`,
-		Example: `blitzctl cluster list minikube`,
+		Example: `blitzctl list cluster --provider minikube`,
 		Aliases: []string{"minikube", "mini", "m"},
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -414,7 +414,7 @@ func (p *MinikubeProvider) GetUpgradeCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Upgrade a minikube cluster",
 		Long:    `Upgrade a minikube cluster to a new Kubernetes version.`,
-		Example: `blitzctl cluster upgrade minikube`,
+		Example: `blitzctl upgrade cluster --provider minikube`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &UpgradeOptions{
@@ -435,7 +435,7 @@ func (p *MinikubeProvider) GetInstallCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Install minikube",
 		Long:    `Install minikube cluster provider.`,
-		Example: `blitzctl cluster install minikube`,
+		Example: `blitzctl install cluster --provider minikube`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return p.Install(&InstallOptions{})
@@ -450,7 +450,7 @@ func (p *MinikubeProvider) GetStartCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Start a minikube cluster",
 		Long:    `Start a minikube cluster.`,
-		Example: `blitzctl cluster start minikube --cluster-name <cluster-name>`,
+		Example: `blitzctl start cluster --provider minikube --cluster-name <cluster-name>`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &Default{
@@ -474,7 +474,7 @@ func (p *MinikubeProvider) GetStopCommand() *cobra.Command {
 		Use:     "minikube",
 		Short:   "Stop a minikube cluster",
 		Long:    `Stop a minikube cluster.`,
-		Example: `blitzctl cluster stop minikube --cluster-name <cluster-name>`,
+		Example: `blitzctl stop cluster --provider minikube --cluster-name <cluster-name>`,
 		Aliases: []string{"mini", "m"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &Default{

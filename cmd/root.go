@@ -9,11 +9,17 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster"
 	configCmd "github.com/OneideLuizSchneider/blitzctl/cmd/config"
 	"github.com/OneideLuizSchneider/blitzctl/cmd/container"
 	contextCmd "github.com/OneideLuizSchneider/blitzctl/cmd/context"
+	createCmd "github.com/OneideLuizSchneider/blitzctl/cmd/create"
+	deleteCmd "github.com/OneideLuizSchneider/blitzctl/cmd/delete"
+	installCmd "github.com/OneideLuizSchneider/blitzctl/cmd/install"
+	listCmd "github.com/OneideLuizSchneider/blitzctl/cmd/list"
+	startCmd "github.com/OneideLuizSchneider/blitzctl/cmd/start"
+	stopCmd "github.com/OneideLuizSchneider/blitzctl/cmd/stop"
 	"github.com/OneideLuizSchneider/blitzctl/cmd/tools"
+	upgradeCmd "github.com/OneideLuizSchneider/blitzctl/cmd/upgrade"
 	versionCmdPkg "github.com/OneideLuizSchneider/blitzctl/cmd/version"
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/OneideLuizSchneider/blitzctl/internal/version"
@@ -56,7 +62,13 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file (default is $HOME/.blitzctl/config.yaml)")
 
 	// Add commands to the root command
-	rootCmd.AddCommand(cluster.GetClusterCmd())
+	rootCmd.AddCommand(createCmd.GetCreateCmd())
+	rootCmd.AddCommand(deleteCmd.GetDeleteCmd())
+	rootCmd.AddCommand(listCmd.GetListCmd())
+	rootCmd.AddCommand(installCmd.GetInstallCmd())
+	rootCmd.AddCommand(upgradeCmd.GetUpgradeCmd())
+	rootCmd.AddCommand(startCmd.GetStartCmd())
+	rootCmd.AddCommand(stopCmd.GetStopCmd())
 	rootCmd.AddCommand(configCmd.GetConfigCmd())
 	rootCmd.AddCommand(container.GetContainerCmd())
 	rootCmd.AddCommand(contextCmd.GetContextCmd())

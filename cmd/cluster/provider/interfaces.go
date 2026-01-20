@@ -11,7 +11,6 @@ type ProviderType string
 const (
 	Kind     ProviderType = "kind"
 	Minikube ProviderType = "minikube"
-	K3d      ProviderType = "k3d"
 )
 
 type Default struct {

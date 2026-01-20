@@ -78,13 +78,16 @@ That's it! The provider will automatically appear in all cluster commands.
 
 ## Command Structure
 
-The factory pattern enables dynamic command registration:
+The factory pattern enables provider-backed commands:
 
 ```
-blitzctl cluster create
-├── kind (from KindProvider.GetCreateCommand())
-├── minikube (from MinikubeProvider.GetCreateCommand())  
-└── k3d (from K3dProvider.GetCreateCommand())
+blitzctl create cluster --provider <provider>
+blitzctl delete cluster --provider <provider>
+blitzctl list cluster --provider <provider>
+blitzctl install cluster --provider <provider>
+blitzctl upgrade cluster --provider <provider>
+blitzctl start cluster --provider <provider>
+blitzctl stop cluster --provider <provider>
 ```
 
 ## Provider Interface
@@ -118,28 +121,34 @@ cmd/cluster/
 Is now replaced with:
 ```
 cmd/cluster/
-├── provider/
-│   ├── interfaces.go
-│   ├── factory.go
-│   ├── kind.go
-│   ├── minikube.go
-│   └── k3d.go
-├── create.go (uses factory)
-├── delete.go (uses factory)
-└── list.go (uses factory)
+└── provider/
+    ├── interfaces.go
+    ├── factory.go
+    ├── kind.go
+    ├── minikube.go
+    └── k3d.go
+cmd/create/
+├── create.go
+└── cluster.go
+cmd/delete/
+├── delete.go
+└── cluster.go
+cmd/list/
+├── list.go
+└── cluster.go
 ```
 
 ## Example Usage
 
 ```bash
 # All these work automatically with any registered provider
-blitzctl cluster create kind --cluster-name=my-kind-cluster
-blitzctl cluster create minikube --cluster-name=my-mini-cluster --driver=docker
-blitzctl cluster create k3d --cluster-name=my-k3d-cluster
+blitzctl create cluster --provider kind --cluster-name=my-kind-cluster
+blitzctl create cluster --provider minikube --cluster-name=my-mini-cluster --driver=docker
+blitzctl create cluster --provider k3d --cluster-name=my-k3d-cluster
 
-blitzctl cluster list kind
-blitzctl cluster list minikube  
-blitzctl cluster list k3d
+blitzctl list cluster --provider kind
+blitzctl list cluster --provider minikube  
+blitzctl list cluster --provider k3d
 
-blitzctl cluster delete kind --cluster-name=my-kind-cluster
+blitzctl delete cluster --provider kind --cluster-name=my-kind-cluster
 ```

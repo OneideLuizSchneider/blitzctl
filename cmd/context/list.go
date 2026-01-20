@@ -22,7 +22,7 @@ var listContextCmd = &cobra.Command{
 
 		if len(clusters) == 0 {
 			fmt.Println("No managed clusters available")
-			fmt.Println("Create clusters using 'blitzctl cluster create' first")
+			fmt.Println("Create clusters using 'blitzctl create cluster' first")
 			return
 		}
 

@@ -150,7 +150,7 @@ func (p *KindProvider) GetStartCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "Start a kind cluster",
 		Long:    `Kind doesn't support direct cluster upgrades. You need to delete and recreate the cluster.`,
-		Example: `blitzctl cluster start kind`,
+		Example: `blitzctl start cluster --provider kind`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return p.Start(&Default{})
@@ -163,7 +163,7 @@ func (p *KindProvider) GetStopCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "Stop a kind cluster",
 		Long:    `Kind doesn't support direct cluster upgrades. You need to delete and recreate the cluster.`,
-		Example: `blitzctl cluster stop kind`,
+		Example: `blitzctl stop cluster --provider kind`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return p.Stop(&Default{})
@@ -283,7 +283,7 @@ func (p *KindProvider) GetCreateCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "Create a kind cluster",
 		Long:    `Create a kind cluster using the specified configuration (kind only works with docker driver).`,
-		Example: `blitzctl cluster create kind --cluster-name=mycluster`,
+		Example: `blitzctl create cluster --provider kind --cluster-name=mycluster`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &CreateOptions{
@@ -313,7 +313,7 @@ func (p *KindProvider) GetDeleteCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "Delete a kind cluster",
 		Long:    `Delete a kind cluster by name.`,
-		Example: `blitzctl cluster delete kind --cluster-name=mycluster`,
+		Example: `blitzctl delete cluster --provider kind --cluster-name=mycluster`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			options := &Default{
@@ -337,7 +337,7 @@ func (p *KindProvider) GetListCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "List all kind clusters",
 		Long:    `List all available kind local clusters`,
-		Example: `blitzctl cluster list kind`,
+		Example: `blitzctl list cluster --provider kind`,
 		Aliases: []string{"kind", "k"},
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -351,7 +351,7 @@ func (p *KindProvider) GetUpgradeCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "Upgrade a kind cluster",
 		Long:    `Kind doesn't support direct cluster upgrades. You need to delete and recreate the cluster.`,
-		Example: `blitzctl cluster upgrade kind`,
+		Example: `blitzctl upgrade cluster --provider kind`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return p.Upgrade(&UpgradeOptions{})
@@ -364,7 +364,7 @@ func (p *KindProvider) GetInstallCommand() *cobra.Command {
 		Use:     "kind",
 		Short:   "Install kind",
 		Long:    `Install kind cluster provider.`,
-		Example: `blitzctl cluster install kind`,
+		Example: `blitzctl install cluster --provider kind`,
 		Aliases: []string{"kind", "k"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return p.Install(&InstallOptions{})

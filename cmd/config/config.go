@@ -16,7 +16,7 @@ var (
 
 		# Set a default value
 		blitzctl config set driver docker
-		blitzctl config set k8s-version 1.32.0
+		blitzctl config set k8s-version 1.35.0
 		blitzctl config set cluster-name my-cluster
 
 		# Get a specific configuration value

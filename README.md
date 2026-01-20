@@ -37,8 +37,8 @@ The script detects your OS/arch (macOS/Linux, amd64/arm64), downloads the matchi
 blitzctl config set driver docker
 blitzctl config set k8s-version 1.33.4
 
-# 2. Create a cluster
-blitzctl cluster create kind --cluster-name my-dev-cluster
+# 2. Create a cluster(default provider is minikube)
+blitzctl create cluster --provider kind --cluster-name my-dev-cluster
 
 # 3. View your managed clusters
 blitzctl config list
@@ -47,7 +47,7 @@ blitzctl config list
 blitzctl context use my-dev-cluster kind
 
 # 5. Create another cluster for testing
-blitzctl cluster create minikube --cluster-name my-test-cluster
+blitzctl create cluster --provider minikube --cluster-name my-test-cluster
 
 # 6. Switch between clusters easily
 blitzctl context list               # See all available contexts
@@ -152,13 +152,13 @@ blitzctl config view
 
 ```sh
 # Clusters are automatically tracked when created
-blitzctl cluster create minikube --cluster-name prod-cluster --driver docker
+blitzctl create cluster --provider minikube --cluster-name prod-cluster --driver docker
 
 # View tracked clusters
 blitzctl config list
 
 # Clusters are automatically removed when deleted
-blitzctl cluster delete minikube --cluster-name prod-cluster
+blitzctl delete cluster --provider minikube --cluster-name prod-cluster
 ```
 
 ### Context Management
@@ -185,18 +185,18 @@ All configuration can be overridden with environment variables:
 export BLITZCTL_DRIVER=docker
 export BLITZCTL_K8S_VERSION=1.33.4
 export BLITZCTL_CNI=cilium
-blitzctl cluster create minikube
+blitzctl create cluster --provider minikube
 ```
 
 ### Custom Configuration File
 
 ```sh
 # Use a custom configuration file
-blitzctl --config ./my-project/.blitzctl/config.yaml cluster create kind
+blitzctl --config ./my-project/.blitzctl/config.yaml create cluster --provider kind
 
 # Or set via environment
 export BLITZCTL_CONFIG=./my-project/.blitzctl/config.yaml
-blitzctl cluster create kind
+blitzctl create cluster --provider kind
 ```
 
 ### Configuration File Format
@@ -292,8 +292,8 @@ blitzctl config get driver  # Shows: containerd
 
 ```sh
 # Create clusters with your configured defaults
-blitzctl cluster create minikube --cluster-name prod-cluster
-blitzctl cluster create kind --cluster-name dev-cluster
+blitzctl create cluster --provider minikube --cluster-name prod-cluster
+blitzctl create cluster --provider kind --cluster-name dev-cluster
 
 # View all managed clusters
 blitzctl config list
@@ -336,8 +336,8 @@ blitzctl config set k8s-version 1.31.0
 blitzctl config set cni cilium
 
 # 2. Create different clusters for different purposes
-blitzctl cluster create kind --cluster-name frontend-dev
-blitzctl cluster create minikube --cluster-name backend-dev --driver podman
+blitzctl create cluster --provider kind --cluster-name frontend-dev
+blitzctl create cluster --provider minikube --cluster-name backend-dev --driver podman
 
 # 3. Switch between environments as needed
 blitzctl context use frontend-dev kind     # Work on frontend
@@ -364,7 +364,7 @@ git add .blitzctl/config.yaml
 git commit -m "Add team blitzctl configuration"
 
 # Other team members can now use:
-blitzctl cluster create kind  # Uses team configuration
+blitzctl create cluster --provider kind  # Uses team configuration
 ```
 
 ### Complete Workflow Example
@@ -375,8 +375,8 @@ blitzctl config set driver docker
 blitzctl config set k8s-version 1.34.4
 
 # 2. Create multiple environments
-blitzctl cluster create kind --cluster-name frontend-dev
-blitzctl cluster create minikube --cluster-name backend-dev --driver podman  
+blitzctl create cluster --provider kind --cluster-name frontend-dev
+blitzctl create cluster --provider minikube --cluster-name backend-dev --driver podman  
 
 # 3. View all your environments
 blitzctl config list
@@ -393,7 +393,7 @@ blitzctl context use backend-dev minikube
 blitzctl context current
 
 # 6. Clean up when done
-blitzctl cluster delete kind --cluster-name frontend-dev
+blitzctl delete cluster --provider kind --cluster-name frontend-dev
 # Automatically removes from tracking
 
 # 7. View remaining environments
@@ -410,10 +410,10 @@ Create a Kubernetes cluster using Minikube with a specific Kubernetes version an
 
 ```sh
 # podman
-blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.33.1 --driver=podman
+blitzctl create cluster --provider minikube --cluster-name=mycluster --k8s-version=1.33.1 --driver=podman
 
 # docker
-blitzctl cluster create minikube --cluster-name=mycluster --k8s-version=1.33.1 --driver=docker
+blitzctl create cluster --provider minikube --cluster-name=mycluster --k8s-version=1.33.1 --driver=docker
 ```
 
 #### Delete a Cluster
@@ -422,9 +422,9 @@ Delete a Kubernetes cluster:
 
 ```sh
 # kind
-blitzctl cluster delete kind --cluster-name=mycluster
+blitzctl delete cluster --provider kind --cluster-name=mycluster
 # minikube
-blitzctl cluster delete minikube --cluster-name=mycluster
+blitzctl delete cluster --provider minikube --cluster-name=mycluster
 ```
 
 #### List All Minikube Clusters
@@ -432,7 +432,7 @@ blitzctl cluster delete minikube --cluster-name=mycluster
 List all Kubernetes clusters managed by Minikube:
 
 ```sh
-blitzctl cluster list minikube
+blitzctl list cluster --provider minikube
 ```
 
 #### Install Minikube
@@ -440,7 +440,7 @@ blitzctl cluster list minikube
 Install Minikube on your system:
 
 ```sh
-blitzctl cluster install minikube
+blitzctl install cluster --provider minikube
 ```
 
 #### Upgrade Minikube
@@ -448,7 +448,7 @@ blitzctl cluster install minikube
 Upgrade Minikube to the latest version:
 
 ```sh
-blitzctl cluster upgrade minikube
+blitzctl upgrade cluster --provider minikube
 ```
 
 #### Upgrade Kind
@@ -456,7 +456,7 @@ blitzctl cluster upgrade minikube
 Upgrade Kind to the latest version:
 
 ```sh
-blitzctl cluster upgrade kind
+blitzctl upgrade cluster --provider kind
 ```
 
 #### Create a Kind Cluster with Default Settings
@@ -464,7 +464,7 @@ blitzctl cluster upgrade kind
 Create a Kubernetes cluster using Kind with default configurations:
 
 ```sh
-blitzctl cluster create kind
+blitzctl create cluster --provider kind
 ```
 
 #### Delete a Cluster with Custom Name
@@ -472,7 +472,7 @@ blitzctl cluster create kind
 Delete a cluster with a custom name:
 
 ```sh
-blitzctl cluster delete kind --cluster-name=custom-cluster
+blitzctl delete cluster --provider kind --cluster-name=custom-cluster
 ```
 
 #### Debugging a Cluster Deletion
@@ -480,7 +480,7 @@ blitzctl cluster delete kind --cluster-name=custom-cluster
 Run a cluster deletion command with debug output enabled:
 
 ```sh
-blitzctl cluster delete kind --cluster-name=mycluster --debug
+blitzctl delete cluster --provider kind --cluster-name=mycluster --debug
 ```
 
 #### Install Helm

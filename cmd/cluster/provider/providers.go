@@ -10,3 +10,13 @@ func GetProviders() []ClusterProvider {
 		NewMinikubeProvider(),
 	}
 }
+
+// GetProviderByType returns the provider matching the given type.
+func GetProviderByType(providerType ProviderType) (ClusterProvider, bool) {
+	for _, p := range GetProviders() {
+		if p.GetProviderType() == providerType {
+			return p, true
+		}
+	}
+	return nil, false
+}
