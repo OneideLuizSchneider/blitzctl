@@ -27,6 +27,8 @@ func InstallTools(cmd *cobra.Command, args []string) {
 		os.Exit(0)
 	}
 
+	fmt.Println("OS: " + runtime.GOOS)
+
 	switch runtime.GOOS {
 	case "linux":
 		url = "https://get.helm.sh/helm-v" + config.DefaultHelmVersion + "-linux-amd64.tar.gz"
@@ -42,49 +44,87 @@ func InstallTools(cmd *cobra.Command, args []string) {
 	}
 
 	fmt.Println("⬇️ Downloading Helm...")
-	if err := exec.Command("curl", "-LO", url).Run(); err != nil {
-		fmt.Println("❌ failed to download helm: %w", err)
-		Cleanup()
+	fmt.Printf("URL: %s\n", url)
+
+	// Get current working directory
+	cwd, _ := os.Getwd()
+	fmt.Printf("Working directory: %s\n", cwd)
+
+	downloadCmd := exec.Command("curl", "-L", "-f", "-o", archive, url)
+	output, err := downloadCmd.CombinedOutput()
+	fmt.Printf("Curl output: %s\n", string(output))
+	if err != nil {
+		fmt.Printf("❌ failed to download helm: %v\n", err)
+		Cleanup(archive, bin)
 		os.Exit(1)
 	}
+
+	// Verify the file was downloaded
+	if _, err := os.Stat(archive); os.IsNotExist(err) {
+		fmt.Printf("❌ Download failed: %s does not exist\n", archive)
+		Cleanup(archive, bin)
+		os.Exit(1)
+	}
+
+	fileInfo, _ := os.Stat(archive)
+	fmt.Printf("✅ Downloaded: %s (%.2f MB)\n", archive, float64(fileInfo.Size())/1024/1024)
 
 	fmt.Println("📦 Extracting Helm...")
-	if err := exec.Command("tar", "xzvf", archive).Run(); err != nil {
-		fmt.Println("❌ failed to extract helm: %w", err)
-		Cleanup()
+	extractCmd := exec.Command("tar", "-xzf", archive)
+	if output, err := extractCmd.CombinedOutput(); err != nil {
+		fmt.Printf("❌ failed to extract helm: %v\n", err)
+		fmt.Printf("Output: %s\n", output)
+		Cleanup(archive, bin)
 		os.Exit(1)
 	}
 
-	fmt.Println("📦Moving Helm binary to /usr/local/bin...")
-	if err := exec.Command("mv", bin, "/usr/local/bin/helm").Run(); err != nil {
-		fmt.Println("❌ failed to move helm binary: %w", err)
-		Cleanup()
+	fmt.Println("📦 Moving Helm binary to /usr/local/bin...")
+	fmt.Println("🔐 This requires administrator privileges. You may be prompted for your password.")
+	moveCmd := exec.Command("sudo", "mv", bin, "/usr/local/bin/helm")
+	moveCmd.Stdin = os.Stdin
+	moveCmd.Stdout = os.Stdout
+	moveCmd.Stderr = os.Stderr
+	if err := moveCmd.Run(); err != nil {
+		fmt.Printf("❌ failed to move helm binary: %v\n", err)
+		Cleanup(archive, bin)
 		os.Exit(1)
 	}
 
-	if err := exec.Command("chmod", "+x", "/usr/local/bin/helm").Run(); err != nil {
-		fmt.Println("❌ failed to chmod helm binary: %w", err)
-		Cleanup()
+	chmodCmd := exec.Command("sudo", "chmod", "+x", "/usr/local/bin/helm")
+	chmodCmd.Stdin = os.Stdin
+	chmodCmd.Stdout = os.Stdout
+	chmodCmd.Stderr = os.Stderr
+	if err := chmodCmd.Run(); err != nil {
+		fmt.Printf("❌ failed to chmod helm binary: %v\n", err)
+		Cleanup(archive, bin)
 		os.Exit(1)
 	}
 
-	Cleanup()
+	Cleanup(archive, bin)
 
 	fmt.Println("✅ Helm installed successfully.")
 }
 
-func Cleanup() {
-	if err := os.Remove("helm-linux-amd64.tar.gz"); err != nil && !os.IsNotExist(err) {
-		fmt.Printf("⚠️  Failed to remove helm-linux-amd64.tar.gz: %v\n", err)
+func Cleanup(archive, bin string) {
+	// Remove the downloaded archive
+	if err := os.Remove(archive); err != nil && !os.IsNotExist(err) {
+		fmt.Printf("⚠️  Failed to remove %s: %v\n", archive, err)
 	}
-	if err := os.Remove("helm-darwin-amd64.tar.gz"); err != nil && !os.IsNotExist(err) {
-		fmt.Printf("⚠️  Failed to remove helm-darwin-amd64.tar.gz: %v\n", err)
+
+	// Extract directory name from bin path (e.g., "darwin-amd64/helm" -> "darwin-amd64")
+	var extractDir string
+	switch runtime.GOOS {
+	case "linux":
+		extractDir = "linux-amd64"
+	case "darwin":
+		extractDir = "darwin-amd64"
 	}
-	if err := os.RemoveAll("linux-amd64"); err != nil {
-		fmt.Printf("⚠️  Failed to remove linux-amd64 directory: %v\n", err)
+
+	if extractDir != "" {
+		if err := os.RemoveAll(extractDir); err != nil && !os.IsNotExist(err) {
+			fmt.Printf("⚠️  Failed to remove %s directory: %v\n", extractDir, err)
+		}
 	}
-	if err := os.RemoveAll("darwin-amd64"); err != nil {
-		fmt.Printf("⚠️  Failed to remove darwin-amd64 directory: %v\n", err)
-	}
+
 	fmt.Println("🧹 Cleanup completed.")
 }
