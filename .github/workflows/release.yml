@@ -38,7 +38,7 @@ jobs:
           LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.Version=${VERSION}"
           LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.GitCommit=${COMMIT}"
           LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.BuildDate=${BUILD_DATE}"
-          go build -trimpath -ldflags="${LDFLAGS}" ./...
+          go build -trimpath -ldflags="${LDFLAGS}" -o blitzctl ./cmd/app
 
       - name: Test
         run: go test -v ./...
@@ -85,7 +85,7 @@ jobs:
           LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.Version=${VERSION}"
           LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.GitCommit=${COMMIT}"
           LDFLAGS+=" -X github.com/OneideLuizSchneider/blitzctl/internal/version.BuildDate=${BUILD_DATE}"
-          go build -trimpath -ldflags="${LDFLAGS}" -o "$OUT" .
+          go build -trimpath -ldflags="${LDFLAGS}" -o "$OUT" ./cmd/app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
