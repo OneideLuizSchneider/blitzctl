@@ -1,3 +1,6 @@
+/*
+Copyright © 2025 Oneide Luiz Schneider
+*/
 package tools
 
 import (
@@ -8,17 +11,31 @@ import (
 
 	"github.com/OneideLuizSchneider/blitzctl/config"
 	"github.com/spf13/cobra"
+	"k8s.io/kubectl/pkg/util/i18n"
+	"k8s.io/kubectl/pkg/util/templates"
 )
 
-var installCmd = &cobra.Command{
-	Use:     "install",
-	Aliases: []string{"i"},
-	Short:   "Install Tools like Helm",
-	Long:    `Install All Tools like Helm`,
-	Run:     InstallTools,
-}
+var (
+	listExample = templates.Examples(i18n.T(`
+		# install helm
+		blitzctl install tools --tool=helm
+		# install all tools
+		blitzctl install tools --tool=all
+	`))
 
-func InstallTools(cmd *cobra.Command, args []string) {
+	InstallHelmCmd = &cobra.Command{
+		Use:     "helm",
+		Example: listExample,
+		Aliases: []string{"h"},
+		Short:   "Install Helm",
+		Long:    `Install Helm`,
+		Run: func(cmd *cobra.Command, args []string) {
+			installHelm()
+		},
+	}
+)
+
+func installHelm() {
 	var url, archive, bin string
 
 	_, err := exec.LookPath("helm")

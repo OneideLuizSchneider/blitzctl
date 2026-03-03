@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 
 	configCmd "github.com/OneideLuizSchneider/blitzctl/cmd/config"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/container"
 	contextCmd "github.com/OneideLuizSchneider/blitzctl/cmd/context"
 	createCmd "github.com/OneideLuizSchneider/blitzctl/cmd/create"
 	deleteCmd "github.com/OneideLuizSchneider/blitzctl/cmd/delete"
@@ -18,7 +17,6 @@ import (
 	listCmd "github.com/OneideLuizSchneider/blitzctl/cmd/list"
 	startCmd "github.com/OneideLuizSchneider/blitzctl/cmd/start"
 	stopCmd "github.com/OneideLuizSchneider/blitzctl/cmd/stop"
-	"github.com/OneideLuizSchneider/blitzctl/cmd/tools"
 	upgradeCmd "github.com/OneideLuizSchneider/blitzctl/cmd/upgrade"
 	versionCmdPkg "github.com/OneideLuizSchneider/blitzctl/cmd/version"
 	"github.com/OneideLuizSchneider/blitzctl/config"
@@ -70,9 +68,7 @@ func init() {
 	rootCmd.AddCommand(startCmd.GetStartCmd())
 	rootCmd.AddCommand(stopCmd.GetStopCmd())
 	rootCmd.AddCommand(configCmd.GetConfigCmd())
-	rootCmd.AddCommand(container.GetContainerCmd())
 	rootCmd.AddCommand(contextCmd.GetContextCmd())
-	rootCmd.AddCommand(tools.GetToolsmd())
 	rootCmd.AddCommand(versionCmdPkg.GetVersionCmd())
 }
 

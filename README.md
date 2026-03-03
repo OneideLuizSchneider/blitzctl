@@ -73,7 +73,7 @@ blitzctl <command> <subcommand> [flags]
 - `list`: List all available clusters.
 - `install`: Install tools like Minikube or Kind.
 - `upgrade`: Upgrade tools like Minikube or Kind to their latest versions.
-- `start` `start`: Only available for `minikube`
+- `start` `stop`: Only available for `minikube`
   - It'll `start` or `stop` a cluster
 
 ##### Configuration Commands
@@ -91,7 +91,7 @@ blitzctl <command> <subcommand> [flags]
 
 ##### Tools Commands
 
-- `tools install`: Install additional tools such as Helm.
+- `install tools`: Install additional tools such as Helm.
 
 #### Flags
 
@@ -488,7 +488,9 @@ blitzctl delete cluster --provider kind --cluster-name=mycluster --debug
 Install Helm on your system:
 
 ```sh
-blitzctl tools install
+blitzctl install tools
+blitzctl install tools --tool=helm
+blitzctl install tools --tool=all
 ```
 
 ---
@@ -516,7 +518,7 @@ blitzctl tools install
 
 #### [Helm](https://helm.sh/)
 - Helm is a package manager for Kubernetes.
-- `blitzctl` can install Helm for you using the `blitzctl tools install` command.
+- `blitzctl` can install Helm for you using the `blitzctl install tools --tool=helm` command.
 
 #### [Kubectl Utilities](https://kubernetes.io/docs/reference/kubectl/)
 - The project uses utilities from the Kubernetes `kubectl` package for handling Kubernetes-related operations.

@@ -12,16 +12,22 @@ import (
 var (
 	installExamples = templates.Examples(i18n.T(`
 		# Install minikube (default provider)
+		# with default configuration
 		blitzctl install cluster
-		
-		# Install kind
-		blitzctl install cluster --provider kind
+		# look for available providers
+		blitzctl install cluster --help
+
+		# Install container driver like Docker
+		blitzctl install container --help
+
+		# Install tools like Helm
+		blitzctl install tool --help
 	`))
 
 	installCmd = &cobra.Command{
 		Use:     "install",
 		Short:   "Install resources",
-		Long:    `Install resources such as local Kubernetes tools.`,
+		Long:    `Install resources such as local Kubernetes tools, container drivers, and other tools like Helm.`,
 		Example: installExamples,
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := cmd.Help(); err != nil {
@@ -36,5 +42,7 @@ func GetInstallCmd() *cobra.Command {
 }
 
 func init() {
-	installCmd.AddCommand(clusterCmd)
+	installCmd.AddCommand(GetClusterCmd())
+	installCmd.AddCommand(GetContainerCmd())
+	installCmd.AddCommand(GetToolsCmd())
 }

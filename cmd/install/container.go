@@ -1,13 +1,14 @@
 /*
 Copyright © 2025 Oneide Luiz Schneider
 */
-package container
+package install
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
 
+	"github.com/OneideLuizSchneider/blitzctl/cmd/cluster/provider"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/util/i18n"
 	"k8s.io/kubectl/pkg/util/templates"
@@ -16,7 +17,10 @@ import (
 var (
 	listExample = templates.Examples(i18n.T(`
 		# this will open the webbrowser for you to install the docker desktop
-		blitzctl container install docker`))
+		blitzctl install container --driver=docker
+		# this will open the webbrowser for you to install the podman desktop
+		blitzctl install container --driver=podman
+	`))
 
 	containerCmd = &cobra.Command{
 		Use:     "container",
@@ -25,9 +29,20 @@ var (
 		Short:   "Install a container driver",
 		Long:    `It opens the webbrowser to install docker desktop manually for example.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := cmd.Help(); err != nil {
-				// Handle the error (e.g., log it or print it)
-				cmd.PrintErrln("❌ Error displaying help:", err)
+			if containerDriver == "" {
+				fmt.Fprintf(os.Stderr, "❗Error: --driver flag is required (docker or podman)\n")
+				os.Exit(1)
+			}
+			switch containerDriver {
+			case string(provider.Docker):
+				fmt.Fprintf(os.Stderr, "❗Opening docker website...\n")
+				dockerCmd.Run(cmd, args)
+			case string(provider.Podman):
+				fmt.Fprintf(os.Stderr, "❗Opening podman website...\n")
+				podmanCmd.Run(cmd, args)
+			default:
+				fmt.Fprintf(os.Stderr, "❗Error: invalid driver '%s'. Valid options are 'docker' or 'podman'\n", containerDriver)
+				os.Exit(1)
 			}
 		},
 	}
@@ -69,6 +84,8 @@ var (
 			}
 		},
 	}
+
+	containerDriver string
 )
 
 func GetContainerCmd() *cobra.Command {
@@ -76,6 +93,5 @@ func GetContainerCmd() *cobra.Command {
 }
 
 func init() {
-	containerCmd.AddCommand(dockerCmd)
-	containerCmd.AddCommand(podmanCmd)
+	containerCmd.Flags().StringVarP(&containerDriver, "driver", "d", string(provider.Docker), i18n.T("Container driver (docker or podman)."))
 }

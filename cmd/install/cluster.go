@@ -45,6 +45,10 @@ var (
 	clusterProvider string
 )
 
+func GetClusterCmd() *cobra.Command {
+	return clusterCmd
+}
+
 func init() {
 	clusterCmd.Flags().StringVarP(&clusterProvider, "provider", "p", string(provider.Minikube), i18n.T("Cluster provider (minikube or kind)."))
 }

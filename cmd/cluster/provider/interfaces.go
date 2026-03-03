@@ -7,10 +7,16 @@ import "github.com/spf13/cobra"
 
 // ProviderType represents the type of cluster provider
 type ProviderType string
+type ContainerDriver string
 
 const (
 	Kind     ProviderType = "kind"
 	Minikube ProviderType = "minikube"
+)
+
+const (
+	Docker ContainerDriver = "docker"
+	Podman ContainerDriver = "podman"
 )
 
 type Default struct {
