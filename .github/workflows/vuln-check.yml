@@ -1,0 +1,29 @@
+name: Vulnerabilities Check
+
+on: [push, pull_request]
+
+permissions:
+  contents: write
+
+jobs:
+  govulncheck_job:
+    runs-on: ubuntu-latest
+    name: Check for Go vulnerabilities
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+          go-version-input: '1.26'
+          # Optional: specify a package pattern (e.g., './...')
+          go-package: './...'
+          # Optional: output format ('text', 'json', or 'sarif'). 'sarif' is best for Code Scanning alerts.
+          output-format: 'sarif'
+          output-file: 'govulncheck-results.sarif'
+          
+      - name: Upload govulncheck results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: govulncheck-results.sarif          
