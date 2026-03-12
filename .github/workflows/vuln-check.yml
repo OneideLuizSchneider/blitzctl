@@ -1,30 +1,29 @@
-name: Vulnerabilities Check
+name: Vulnerability Scan
 
 on: [push, pull_request]
 
 permissions:
-  security-events: write  # Required to upload SARIF results
-  contents: read          # Required to checkout the code
+  security-events: write
+  contents: read
 
 jobs:
-  govulncheck_job:
+  govulncheck:
     runs-on: ubuntu-latest
-    name: Check for Go vulnerabilities
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5 # Updated
+      - uses: actions/setup-go@v6 # Updated
+        with:
+          go-version: '1.26'
 
       - name: Run govulncheck
         uses: golang/govulncheck-action@v1
         with:
-          go-version-input: '1.26'
-          # Optional: specify a package pattern (e.g., './...')
-          go-package: './...'
-          # Optional: output format ('text', 'json', or 'sarif'). 'sarif' is best for Code Scanning alerts.
-          output-format: 'sarif'
-          output-file: 'govulncheck-results.sarif'
-          
-      - name: Upload govulncheck results to GitHub Code Scanning
+          output-format: sarif
+          output-file: results.sarif
+
+      - name: Upload SARIF report
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: govulncheck-results.sarif          
+          sarif_file: results.sarif
