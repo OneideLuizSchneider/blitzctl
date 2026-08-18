@@ -16,5 +16,5 @@ const (
 	DefaultCni         = "cilium"
 
 	// https://github.com/helm/helm/releases
-	DefaultHelmVersion = "3.20.1"
+	DefaultHelmVersion = "3.21.4"
 )
