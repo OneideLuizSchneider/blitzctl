@@ -10,11 +10,11 @@ package config
 // - k8s release versions can be found at:
 //   - https://kubernetes.io/releases/
 const (
-	DefaultK8sVersion  = "1.36.2"
+	DefaultK8sVersion  = "1.37.0"
 	DefaultDriver      = "docker"
 	DefaultClusterName = "blitz-cluster1"
 	DefaultCni         = "cilium"
 
 	// https://github.com/helm/helm/releases
-	DefaultHelmVersion = "3.21.4"
+	DefaultHelmVersion = "3.22.1"
 )
